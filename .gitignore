@@ -1,0 +1,10 @@
+# Directories to ignore
+target/
+GIF_TMP/
+
+# Files to ignore
+display
+*.gif
+*.pdf
+*.png
+*.raw

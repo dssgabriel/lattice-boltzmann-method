@@ -168,7 +168,7 @@ int main(int argc, char* argv[static argc + 1])
     }
 
     // Barrier to wait for all processes before starting
-    MPI_Barrier(MPI_COMM_WORLD);
+    // MPI_Barrier(MPI_COMM_WORLD);
 
     // Time steps
     for (ssize_t i = 1; i < ITERATIONS; i++) {
@@ -180,18 +180,18 @@ int main(int argc, char* argv[static argc + 1])
         // Compute special actions (border, obstacle...)
         special_cells(&mesh, &mesh_type, &mesh_comm);
         // Need to wait all before doing next step
-        MPI_Barrier(MPI_COMM_WORLD);
+        // MPI_Barrier(MPI_COMM_WORLD);
 
         // Compute collision term
         collision(&temp, &mesh);
         // Need to wait all before doing next step
-        MPI_Barrier(MPI_COMM_WORLD);
+        // MPI_Barrier(MPI_COMM_WORLD);
 
         // Propagate values from node to neighboors
         lbm_comm_ghost_exchange(&mesh_comm, &temp);
         propagation(&mesh, &temp);
         // Need to wait all before doing next step
-        MPI_Barrier(MPI_COMM_WORLD);
+        // MPI_Barrier(MPI_COMM_WORLD);
 
         // Save step
         if (i % WRITE_STEP_INTERVAL == 0 &&

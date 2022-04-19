@@ -40,6 +40,7 @@ int const opposite_of[DIRECTIONS] = {
 double get_vect_norm_2(Vector const a, Vector const b)
 {
     double res = 0.0;
+    #pragma omp parallel for reduction(+:res)
     for (size_t k = 0; k < DIMENSIONS; k++) {
         res += a[k] * b[k];
     }
@@ -52,7 +53,7 @@ double get_cell_density(lbm_mesh_cell_t const cell)
     assert(cell != NULL);
 
     double res = 0.0;
-    // #pragma omp parallel for reduction(+:res)
+    #pragma omp parallel for reduction(+:res)
     for (size_t k = 0; k < DIRECTIONS; k++) {
         res += cell[k];
     }
@@ -67,10 +68,12 @@ void get_cell_velocity(Vector v, lbm_mesh_cell_t const cell,
     assert(cell != NULL);
 
     // Loop on all dimensions
+    #pragma omp parallel for
     for (size_t d = 0; d < DIMENSIONS; d++) {
         v[d] = 0.0;
 
         // Sum all directions
+        // #pragma omp for reduction(+:v[d])
         for (size_t k = 0; k < DIRECTIONS; k++) {
             v[d] += cell[k] * direction_matrix[k][d];
         }
@@ -107,6 +110,7 @@ void compute_cell_collision(lbm_mesh_cell_t cell_out,
     get_cell_velocity(v, cell_in, density);
 
     // Loop on microscopic directions
+    #pragma omp parallel for
     for (size_t k = 0; k < DIRECTIONS; k++) {
         // Compute f at equilibrium
         double f_eq = compute_equilibrium_profile(v, density, k);
@@ -118,10 +122,12 @@ void compute_cell_collision(lbm_mesh_cell_t cell_out,
 void compute_bounce_back(lbm_mesh_cell_t cell)
 {
     double tmp[DIRECTIONS];
+    #pragma omp parallel for
     for (size_t k = 0; k < DIRECTIONS; k++) {
         tmp[k] = cell[opposite_of[k]];
     }
 
+    #pragma omp parallel for
     for (size_t k = 0; k < DIRECTIONS; k++) {
         cell[k] = tmp[k];
     }
@@ -186,6 +192,7 @@ void special_cells(Mesh* mesh, lbm_mesh_type_t* mesh_type,
                    lbm_comm_t const* mesh_comm)
 {
     // Loop on all inner cells
+    #pragma omp parallel for
     for (size_t i = 1; i < mesh->width - 1; i++) {
         for (size_t j = 1; j < mesh->height - 1; j++) {
             switch (*(lbm_cell_type_t_get_cell(mesh_type, i, j))) {
@@ -213,6 +220,7 @@ void collision(Mesh* mesh_out, const Mesh* mesh_in)
     assert(mesh_in->height == mesh_out->height);
 
     // Loop on all inner cells
+    #pragma omp parallel for
     for (size_t j = 1; j < mesh_in->height - 1; j++) {
         for (size_t i = 1; i < mesh_in->width - 1; i++) {
             compute_cell_collision(Mesh_get_cell(mesh_out, i, j),
@@ -224,6 +232,7 @@ void collision(Mesh* mesh_out, const Mesh* mesh_in)
 void propagation(Mesh* mesh_out, Mesh const* mesh_in)
 {
     // Loop on all cells
+    #pragma omp parallel for
     for (size_t j = 0; j < mesh_out->height; j++) {
         for (size_t i = 0; i < mesh_out->width; i++) {
             // For all direction

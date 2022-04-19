@@ -11,21 +11,21 @@ LDFLAGS=-lm
 # Files
 DEPS=target/deps
 SRC=src
-LBM_SOURCES=src/lbm_*.c src/main.c src/usleep.c
+LBM_SOURCES=src/lbm_*.c src/main.c
 LBM_HEADERS=include/*.h
-LBM_OBJECTS=$(DEPS)/lbm_comm.o $(DEPS)/lbm_config.o $(DEPS)/lbm_init.o $(DEPS)/lbm_phys.o $(DEPS)/lbm_struct.o $(DEPS)/usleep.o $(DEPS)/main.o
+LBM_OBJECTS=$(DEPS)/lbm_comm.o $(DEPS)/lbm_config.o $(DEPS)/lbm_init.o $(DEPS)/lbm_phys.o $(DEPS)/lbm_struct.o $(DEPS)/main.o
 
-all: lbm display
+all: target/lbm display
 
-run: lbm
+run: target/lbm
 	mpiexec -n 4 target/lbm
 
 target/deps/%.o: $(SRC)/%.c
 	@mkdir -p target/deps
 	$(MPICC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 
-lbm: $(LBM_OBJECTS)
-	$(MPICC) $(CFLAGS) $(OFLAGS) $^ -o target/$@ $(LDFLAGS)
+target/lbm: $(LBM_OBJECTS)
+	$(MPICC) $(CFLAGS) $(OFLAGS) $^ -o $@ $(LDFLAGS)
 
 display: $(SRC)/display.c
 	$(CC) $(CFLAGS) $? -o $@

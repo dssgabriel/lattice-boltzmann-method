@@ -1,9 +1,9 @@
 iterations           = 16000
 width                = 800
 height               = 160
-#obstacle_r           = 
-#obstacle_x           = 
-#obstacle_y           = 
+obstacle_x           = 0.0
+obstacle_y           = 0.0
+obstacle_r           = 0.0
 reynolds             = 100
 inflow_max_velocity  = 0.100000
 inflow_max_velocity  = 0.100000

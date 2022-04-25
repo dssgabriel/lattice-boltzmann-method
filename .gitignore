@@ -1,10 +1,11 @@
 # Directories to ignore
 target/
 GIF_TMP/
+.cache/
 
 # Files to ignore
-display
 *.gif
 *.pdf
 *.png
 *.raw
+compile_commands.json

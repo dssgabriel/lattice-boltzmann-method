@@ -117,13 +117,6 @@ double elapsed(struct timespec const before, struct timespec const after)
     return (after.tv_sec - before.tv_sec) + (after.tv_nsec - before.tv_nsec) / 1e9;
 }
 
-static inline
-void format_min_sec(double const time, uint8_t* minutes, uint8_t* seconds)
-{
-    *minutes = time / 60;
-    *seconds = ((size_t)time % 60);
-}
-
 int main(int argc, char* argv[static argc + 1])
 {
     // Init MPI, get current rank and communicator size.
@@ -215,24 +208,22 @@ int main(int argc, char* argv[static argc + 1])
 
         // Print progress
         if (rank == RANK_MASTER) {
-            printf("Computing simulation... %5zu/%5d (%3.2f%%)\r",
+            printf("Computing simulation step %5zu/%5d (%3.2f%%)\r",
                    i + 1, ITERATIONS, (float)(i + 1) / ITERATIONS * 100.0);
         }
 
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
-    if (rank == RANK_MASTER && fp != NULL) {
-        close_file(fp);
-    }
-
     if (rank == RANK_MASTER) {
         struct timespec after;
         clock_gettime(CLOCK_MONOTONIC_RAW, &after);
         double const compute_time = elapsed(before, after);
-        uint8_t min, secs;
-        format_min_sec(compute_time, &min, &secs);
-        printf("\r%80c\rFinished computing simulation in %.3lfs (%dmin %ds)\n\n", ' ', compute_time, min, secs);
+        printf("\r%80c\rFinished computing simulation in %.9lfs.\n\n", ' ', compute_time);
+    }
+
+    if (rank == RANK_MASTER && fp != NULL) {
+        close_file(fp);
     }
 
     // Free memory

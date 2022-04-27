@@ -8,4 +8,4 @@ GIF_TMP/
 *.pdf
 *.png
 *.raw
-compile_commands.json
+*.json

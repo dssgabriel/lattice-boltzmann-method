@@ -21,17 +21,14 @@ function print_local {
     max_recv=$(get_max "MpiRecv" $1)
     max_barr=$(get_max "MpiBarrier" $1)
 
-    printf "\n\033[1mLocal communications to process \033[33m%d:\033[0m%13s\033[1;36m%9s\033[0m ± \033[1m%10s\033[0m (\033[34m%s\033[0m … \033[91m%s\033[0m)\n" $1 " " "Time" "σ" "min" "max"
-    printf "  Messages sent:                   \033[1;32m%9d\033[0m ─ \033[1;36m%9s\033[0m ± %10s%s\033[34m%s\033[0m … \033[91m%s\033[0m)\n" ${rank_send[$1]} $time_send $sigma_send " (" $min_send $max_send
-    printf "  Messages received:               \033[1;32m%9d\033[0m ─ \033[1;36m%9s\033[0m ± %10s%s\033[34m%s\033[0m … \033[91m%s\033[0m)\n" ${rank_recv[$1]} $time_recv $sigma_recv " (" $min_recv $max_recv
-    printf "  Barriers:                        \033[1;32m%9d\033[0m ─ \033[1;36m%9s\033[0m ± %10s%s\033[34m%s\033[0m … \033[91m%s\033[0m)\n" ${rank_barrier[$1]} $time_barr $sigma_barr " (" $min_barr $max_barr
+    printf "\n\033[1mLocal communications to process \033[33m%d:\033[0m%13s\033[1;36m%9s\033[0m ± \033[1m%10s\033[0m %12b\033[0m … \033[91m%s\033[0m)\n" $1 " " "Time" "σ" "(\033[34mmin" "max"
+    printf "  Messages sent:                   \033[1;32m%9d\033[0m ─ \033[1;36m%9s\033[0m ± %10s %10b\033[0m … \033[91m%s\033[0m)\n" ${rank_send[$1]} $time_send $sigma_send "(\033[34m$min_send" $max_send
+    printf "  Messages received:               \033[1;32m%9d\033[0m ─ \033[1;36m%9s\033[0m ± %10s %10b\033[0m … \033[91m%s\033[0m)\n" ${rank_recv[$1]} $time_recv $sigma_recv "(\033[34m$min_recv" $max_recv
+    printf "  Barriers:                        \033[1;32m%9d\033[0m ─ \033[1;36m%9s\033[0m ± %9s %10b\033[0m … \033[91m%s\033[0m)\n" ${rank_barrier[$1]} $time_barr $sigma_barr "(\033[34m$min_barr" $max_barr
     printf "  Number of partner processes:     \033[1;32m%9d\033[0m (partner ranks ID:" ${nb_partners[$1]}
     printf " \033[1;33m%s\033[0m" ${partners[$@]}
     printf ")\n"
 }
-
-scale=1000000
-unit="s"
 
 # Determine the scale of the time and rescale accordingly
 function rescale {
@@ -76,7 +73,7 @@ function get_sigma {
         rg -A7 --trim $1 $interpol_traces | rg -A6 "current_rank\": $2" | rg "duration" | sed -e "s/\"duration\": //g" | sort -g > $file
     fi
 
-    local sigma_tsc=$(awk '{sum+=$0;a[NR]=$0}END{for(i in a)y+=(a[i]-(sum/NR))^2;print sqrt(y/(NR-1))}' $file)
+    local sigma_tsc=$(awk -v OFMT='%lf' '{sum+=$0;a[NR]=$0}END{for(i in a)y+=(a[i]-(sum/NR))^2;print sqrt(y/(NR-1))}' $file)
     local sigma_time=$(echo "scale=3; $sigma_tsc / ($freq * 1000000)" | bc -l)
     echo $(rescale $sigma_time $sigma_tsc)
 }
@@ -143,7 +140,7 @@ printf "  Messages sent:                   \033[1;32m%9d\033[0m\n" $total_sends
 printf "  Messages received:               \033[1;32m%9d\033[0m\n" $total_recvs
 printf "  Barriers:                        \033[1;32m%9d\033[0m\n" $total_barriers
 printf "  Total MPI calls:                 \033[1;32m%9d\033[0m\n\n" $total_calls
-echo "─────────────────────────────────────────────────────────────────────────────"
+echo "──────────────────────────────────────────────────────────────────────────────────────────────────"
 
 for i in $(seq 0 $nb_ranks); do
     print_local $i

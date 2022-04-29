@@ -27,9 +27,9 @@ void lbm_comm_print(lbm_comm_t const* mesh_comm)
 {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    printf("%sRank %d:%s L = %2d | R = %2d | T = %2d | B = %2d | CORNER: "
-           "%2d, %2d, %2d, %2d | POS: %d %d (W = %d, H %d)\n",
-           "\033[1m", rank, "\033[0m", mesh_comm->left_id, mesh_comm->right_id,
+    printf("\033[1mRank \033[33m%d\033[0m: L = %2d, R = %2d, T = %2d, B = %2d | CORNER: "
+           "%2d, %2d, %2d, %2d | POS: %3d %3d (W = %3d, H = %3d)\n",
+           rank, mesh_comm->left_id, mesh_comm->right_id,
            mesh_comm->top_id, mesh_comm->bottom_id, mesh_comm->corner_id[0],
            mesh_comm->corner_id[1], mesh_comm->corner_id[2],
            mesh_comm->corner_id[3], mesh_comm->x, mesh_comm->y,

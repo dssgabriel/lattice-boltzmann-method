@@ -9,13 +9,14 @@ CFLAGS := -Wall -Wextra -g -I include/
 OFLAGS := -march=native -mtune=native -Ofast
 LDFLAGS := -lm
 MPIFLAGS := -n 2
+MODE := strong
 
 # Files
 DEPS := target/deps
 SRC := src
 LBM_SOURCES := src/lbm_*.c src/main.c
 LBM_HEADERS := include/*.h
-LBM_OBJECTS := $(DEPS)/lbm_comm.o $(DEPS)/lbm_config.o $(DEPS)/lbm_init.o $(DEPS)/lbm_phys.o $(DEPS)/lbm_struct.o $(DEPS)/main.o
+LBM_OBJECTS := $(DEPS)/lbm_comm.o $(DEPS)/lbm_config.o $(DEPS)/lbm_init.o $(DEPS)/lbm_phys.o $(DEPS)/lbm_struct.o
 RAW := results.raw
 GIF := output.gif
 TRACE := interpol_traces.json
@@ -25,7 +26,7 @@ build: target/lbm target/display
 
 run: target/lbm
 	@rm -f $(GIF)
-	$(MPICMD) -np 4 $^
+	$(MPICMD) $(MPIFLAGS) $^
 
 gif: $(GIF)
 	@brave $^ &
@@ -34,7 +35,10 @@ check: target/display
 	@bash ../scripts/check_sim.sh $(RAW)
 
 trace: $(TRACE)
-	@bash ../scripts/interpol_summary.sh $?
+	@bash ../scripts/interpol_report.sh $<
+
+bench: target/lbm
+	@bash ../scripts/bench.sh $(MODE) $(MPICMD) target/lbm
 
 $(TRACES): target/lbm
 	LD_PRELOAD=libinterpol.so $(MPICMD) $(MPIFLAGS) $?
@@ -53,18 +57,18 @@ $(DEPS)/%.o: $(SRC)/%.c
 	@mkdir -p target/deps
 	$(MPICC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 
-target/lbm: $(LBM_OBJECTS)
+target/lbm: $(LBM_OBJECTS) $(SRC)/main.c
 	@mkdir -p target
-	$(MPICC) $(CFLAGS) $(OFLAGS) $? -o $@ $(LDFLAGS)
+	$(MPICC) $(CFLAGS) $(OFLAGS) $^ -o $@ $(LDFLAGS)
 
 target/display: $(SRC)/display.c
 	@mkdir -p target
 	$(CC) $(CFLAGS) $? -o $@
 
 clean:
-	@rm -rf target/ *.raw *.gif GIF_TMP/
+	@rm -rf target/ *.raw *.gif GIF_TMP/ tmp/ benchmarks/ plots/
 
 depend:
 	$(MAKEDEPEND) -Y. $(LBM_SOURCES) $(SRC)/display.c
 
-.PHONY: clean build run gif check depend
+.PHONY: clean build run gif check depend bench 

@@ -17,12 +17,11 @@
 /**
  * @brief Writes the output file's header.
  * It essentialy provides information on the size of the mesh.
- * 
+ *
  * @param fp File descriptor to write to.
  * @param mesh_comm Domain to save.
  **/
-static
-void write_file_header(FILE* fp, lbm_comm_t* mesh_comm)
+static void write_file_header(FILE* fp, lbm_comm_t* mesh_comm)
 {
     // Setup header values
     lbm_file_header_t header = {
@@ -38,11 +37,10 @@ void write_file_header(FILE* fp, lbm_comm_t* mesh_comm)
 
 /**
  * @brief Opens the output file's header in write mode.
- * 
- * @return File descriptor to write to. 
+ *
+ * @return File descriptor to write to.
  **/
-static
-FILE* open_output_file()
+static FILE* open_output_file()
 {
     // No output if empty filename
     if (RESULT_FILENAME == NULL) {
@@ -59,20 +57,19 @@ FILE* open_output_file()
     return fp;
 }
 
-static inline
-void close_file(FILE* fp)
+static inline void close_file(FILE* fp)
 {
     fclose(fp);
 }
 
 /**
  * @brief Saves the result of one step of computation.
- * 
+ *
  * This function can be called multiple times when a MPI save on multiple
  * processes happens (e.g. saving them one at a time on each domain).
  * Writes only velocities and macroscopic densities in the form of single
  * precision floating-point numbers.
- * 
+ *
  * @param fp File descriptor to write to.
  * @param mesh Domain to save.
  **/
@@ -111,13 +108,14 @@ void save_frame(FILE* fp, const Mesh* mesh)
     }
 }
 
-static inline
-double elapsed(struct timespec const before, struct timespec const after)
+static inline double elapsed(struct timespec const before,
+                             struct timespec const after)
 {
-    return (after.tv_sec - before.tv_sec) + (after.tv_nsec - before.tv_nsec) / 1e9;
+    return (after.tv_sec - before.tv_sec) +
+           (after.tv_nsec - before.tv_nsec) / 1e9;
 }
 
-int main(int argc, char* argv[static argc + 1])
+int main(int argc, char* argv[argc + 1])
 {
     // Init MPI, get current rank and communicator size.
     MPI_Init(&argc, &argv);
@@ -177,14 +175,20 @@ int main(int argc, char* argv[static argc + 1])
 
     // Barrier to wait for all processes before starting
     MPI_Barrier(MPI_COMM_WORLD);
-    struct timespec before;
     if (rank == RANK_MASTER) {
         putc('\n', stdout);
-        clock_gettime(CLOCK_MONOTONIC_RAW, &before);
     }
 
+    struct timespec overall_before, overall_after;
+    struct timespec loop_before, loop_after;
+    double* loop_latencies = malloc(ITERATIONS * sizeof(double));
+    ;
+
+    clock_gettime(CLOCK_MONOTONIC_RAW, &overall_before);
     // Time steps
     for (ssize_t i = 1; i < ITERATIONS; i++) {
+        clock_gettime(CLOCK_MONOTONIC_RAW, &loop_before);
+
         // Compute special actions (border, obstacle...)
         special_cells(&mesh, &mesh_type, &mesh_comm);
         // Need to wait all before doing next step
@@ -202,24 +206,48 @@ int main(int argc, char* argv[static argc + 1])
         MPI_Barrier(MPI_COMM_WORLD);
 
         // Save step
-        if (i % WRITE_STEP_INTERVAL == 0 && lbm_gbl_config.output_filename != NULL) {
+        if (i % WRITE_STEP_INTERVAL == 0 &&
+            lbm_gbl_config.output_filename != NULL) {
             save_frame_all_domain(fp, &mesh, &temp_render);
         }
 
+        // Measure time
+        clock_gettime(CLOCK_MONOTONIC_RAW, &loop_after);
+        loop_latencies[i] = elapsed(loop_before, loop_after);
+
         // Print progress
         if (rank == RANK_MASTER) {
-            printf("Computing simulation step %5zu/%5d (%3.2f%%)\r",
-                   i + 1, ITERATIONS, (float)(i + 1) / ITERATIONS * 100.0);
+            printf("Computing simulation step %5zu/%5d (%3.2f%%)\r", i + 1,
+                   ITERATIONS, (float)(i + 1) / ITERATIONS * 100.0);
         }
-
     }
+    clock_gettime(CLOCK_MONOTONIC_RAW, &overall_after);
+    double const local_latency = elapsed(overall_before, overall_after);
 
     MPI_Barrier(MPI_COMM_WORLD);
+    double local_avg_loop_latency = 0.0;
+    for (size_t i = 0; i < ITERATIONS; ++i) {
+        local_avg_loop_latency += loop_latencies[i];
+    }
+    local_avg_loop_latency /= ITERATIONS;
+
+    double global_avg_loop_latency, global_latency;
+    MPI_Reduce(&local_avg_loop_latency, &global_avg_loop_latency, 1, MPI_DOUBLE,
+               MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&local_latency, &global_latency, 1, MPI_DOUBLE, MPI_SUM, 0,
+               MPI_COMM_WORLD);
+
+    printf("\r%80c\r\033[1mRank \033[33m%d\033[0m: local average loop latency: "
+           "\033[36m%.6lfms\033[0m\n",
+           ' ', rank, local_avg_loop_latency * 1000.0);
+    printf("\r%80c\r\033[1mRank \033[33m%d\033[0m: local simulation latency:   "
+           "\033[36m%.9lfs\033[0m\n\n",
+           ' ', rank, local_latency);
     if (rank == RANK_MASTER) {
-        struct timespec after;
-        clock_gettime(CLOCK_MONOTONIC_RAW, &after);
-        double const compute_time = elapsed(before, after);
-        printf("\r%80c\rFinished computing simulation in %.9lfs.\n\n", ' ', compute_time);
+        printf("Global average loop latency:        %.6lfms\n",
+               global_avg_loop_latency / comm_size * 1000.0);
+        printf("Global simulation latency:          %.9lfs\n",
+               global_latency / comm_size);
     }
 
     if (rank == RANK_MASTER && fp != NULL) {
@@ -227,6 +255,7 @@ int main(int argc, char* argv[static argc + 1])
     }
 
     // Free memory
+    free(loop_latencies);
     lbm_comm_release(&mesh_comm);
     Mesh_release(&mesh);
     Mesh_release(&temp);

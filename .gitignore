@@ -2,6 +2,9 @@
 target/
 GIF_TMP/
 .cache/
+tmp/
+benchmarks/
+plots/
 
 # Files to ignore
 *.gif

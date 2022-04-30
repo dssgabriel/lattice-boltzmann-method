@@ -66,7 +66,7 @@ target/display: $(SRC)/display.c
 	$(CC) $(CFLAGS) $? -o $@
 
 clean:
-	@rm -rf target/ *.raw *.gif GIF_TMP/ tmp/ benchmarks/ plots/
+	@rm -rf target/ results.raw *.gif GIF_TMP/ tmp/ benchmarks/ plots/
 
 depend:
 	$(MAKEDEPEND) -Y. $(LBM_SOURCES) $(SRC)/display.c

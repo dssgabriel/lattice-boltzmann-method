@@ -63,7 +63,7 @@ rm -f $bench
 printf "\033[1;34m==>\033[0m Starting \033[1m%s scalability\033[0m benchmark on \033[35m%s\033[0m...\n" $mode $bin
 if [ "$mode" = "strong" ]; then
     create_config 800 160
-    procs=(1 2 3 4 6 8)
+    procs=(1 2 4 8)
     
     for (( i=0; i<${#procs[@]}; i++)); do
         proc=${procs[$i]}
@@ -81,12 +81,12 @@ if [ "$mode" = "strong" ]; then
 elif [ "$mode" = "weak" ]; then
     width=400
     height=80
-    for (( i=0; i<6; i++ )); do
+    for (( i=0; i<4; i++ )); do
         printf "Running with dimensions \033[1;33m%d\033[0mx\033[1;33m%d\033[0m... " $width $height
 
         create_config $width $height
         run=tmp/run_$i.out
-        $mpicmd $mpiflags 2 $bin > $run
+        $mpicmd $mpiflags 4 $bin > $run
 
         nb_cells=$(($width * $height))
         latency=$(rg "Global simulation latency:" $run | awk '{print $4}' | sed -e "s/s//g")

@@ -38,6 +38,7 @@ int const opposite_of[DIRECTIONS] = {
     #error Need to defined adapted equilibrium distribution function
 #endif
 
+inline
 double get_vect_norm_2(Vector const a, Vector const b)
 {
     double res = 0.0;
@@ -48,6 +49,7 @@ double get_vect_norm_2(Vector const a, Vector const b)
     return res;
 }
 
+inline
 double get_cell_density(lbm_mesh_cell_t const cell)
 {
     assert(cell != NULL);
@@ -175,11 +177,8 @@ void compute_outflow_zou_he_const_density(lbm_mesh_cell_t cell)
 
     // Now can compute unknown microscopic values
     cell[3] = cell[1] - (2.0 / 3.0) * rho * v;
-    cell[7] = cell[5] + (1.0 / 2.0) * (cell[2] - cell[4]) - (1.0 / 6.0) *
-              (rho * v); // - (1.0 / 2.0) * (rho * v_y) <- no velocity on Y so v_y = 0
-        
-    cell[6] = cell[8] + (1.0 / 2.0) * (cell[4] - cell[2]) - (1.0 / 6.0) *
-              (rho * v); // + (1.0 / 2.0) * (rho * v_y) <- no velocity on Y so v_y = 0
+    cell[7] = cell[5] + (1.0 / 2.0) * (cell[2] - cell[4]) - (1.0 / 6.0) * (rho * v);
+    cell[6] = cell[8] + (1.0 / 2.0) * (cell[4] - cell[2]) - (1.0 / 6.0) * (rho * v);
 }
 
 void special_cells(Mesh* mesh, lbm_mesh_type_t* mesh_type,
@@ -213,11 +212,10 @@ void collision(Mesh* mesh_out, const Mesh* mesh_in)
     assert(mesh_in->height == mesh_out->height);
 
     // Loop on all inner cells
-    #pragma omp parallel for collapse(2) schedule(guided)
+    #pragma omp parallel for collapse(2) schedule(static)
     for (size_t j = 1; j < mesh_in->height - 1; j++) {
         for (size_t i = 1; i < mesh_in->width - 1; i++) {
-            compute_cell_collision(Mesh_get_cell(mesh_out, i, j),
-                                   Mesh_get_cell(mesh_in, i, j));
+            compute_cell_collision(Mesh_get_cell(mesh_out, i, j), Mesh_get_cell(mesh_in, i, j));
         }
     }
 }
@@ -225,7 +223,7 @@ void collision(Mesh* mesh_out, const Mesh* mesh_in)
 void propagation(Mesh* mesh_out, Mesh const* mesh_in)
 {
     // Loop on all cells
-    #pragma omp parallel for collapse(3) schedule(guided)
+    #pragma omp parallel for collapse(3) schedule(static)
     for (size_t j = 0; j < mesh_out->height; j++) {
         for (size_t i = 0; i < mesh_out->width; i++) {
             // For all direction

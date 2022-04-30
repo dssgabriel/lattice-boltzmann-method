@@ -1,0 +1,3 @@
+loop_id;module;function_name;function_id;source_info;level;time_p;time_s;time_s_min;time_s_avg;time_s_max;cov_deviation;nb_threads;
+15;lbm;propagation._omp_fn.0;9;;Single;46.35;19.68;;;;;;
+16;lbm;collision._omp_fn.0;10;;Single;44.67;18.96;;;;;;

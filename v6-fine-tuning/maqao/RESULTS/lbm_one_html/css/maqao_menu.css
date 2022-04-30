@@ -1,0 +1,110 @@
+#maqao_logo {
+   vertical-align: middle;
+   display: inline;
+   padding-top: 15px;
+   padding-left: 15px;
+   padding-right: 15px;
+}
+    
+#maqao_menu, #maqao_menu ul { /* Liste */ 
+   padding : 0;
+   margin : 0;
+   list-style : none;
+   line-height : 35px;
+   text-align : center;
+}
+#maqao_menu {
+   font-weight : bold;
+   font-size : 16px;
+   display: inline;
+}
+#maqao_menu a {
+   display : block;
+   padding : 0;
+   color : var(--header_font);
+   text-decoration : none;
+   width : 144px;
+}
+#maqao_menu a:hover {
+   color: var(--header_font_hover);
+}
+#maqao_menu ._current_page {
+   color : var(--header_font_selected);
+}
+#maqao_menu ._current_page {
+   background-color: var(--header_background_selected);
+   border-top-left-radius: 10px;
+   border-top-right-radius: 10px;
+   padding-bottom: 10px;
+}
+#maqao_menu li li a._current_page {
+   background-color: var(--header_sub_background_selected);
+   border-radius: 10px;
+   padding: 0px;
+}
+#maqao_menu ._current_page:hover {
+   color : #e68a00;
+}
+/* For I.E. */
+#maqao_menu li {
+   display:inline-block;
+}
+html>body #maqao_menu li {
+   display:inline-block
+}
+#maqao_menu li ul {
+   position: absolute;
+   width: 144px;
+   left: -999em;
+}
+#maqao_menu li li a {
+   background: var(--header_sub_background);
+   border: var(--header_sub_borders);
+   border-style: solid;
+   border-width: 1px;
+}
+/* For I.E. */
+#maqao_menu li ul li {
+   border : 1px solid #fff;
+}
+html>body #maqao_menu li ul li {
+   border : 1px solid transparent;
+}
+/* For I.E. */
+#maqao_menu li ul ul {
+   margin    : -28px 0 0 144px ;
+   border     : 1px solid #fff ;
+}
+html>body #maqao_menu li ul ul {
+   border     : 1px solid transparent ;
+}
+#maqao_menu li:hover ul ul, #maqao_menu li.sfhover ul ul {
+   left: -999em;
+}
+#maqao_menu li:hover ul, #maqao_menu li li:hover ul, #maqao_menu li.sfhover ul, #maqao_menu li li.sfhover ul {
+   left: auto;
+   min-height: 0; 
+}
+#menu_options_icon {
+   float:right;
+   margin-top: 20px;
+   margin-right:10px;
+   cursor: pointer;
+   transition: transform 2s;
+}
+#menu_options_icon:hover {
+   transform: rotate(180deg);
+}
+#options_configuration {
+   background: var(--header_background);
+   padding-bottom: 15px;
+   color: var(--header_font);
+}
+#options_configuration_header {
+   padding-top:5px;
+   padding-bottom:5px;
+   background: var(--header_background_selected);
+   color: var(--header_font);
+   margin-top: 0px;
+}
+   

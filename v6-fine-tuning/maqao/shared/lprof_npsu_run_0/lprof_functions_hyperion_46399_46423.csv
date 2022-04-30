@@ -1,0 +1,10 @@
+function_id;module;function_name;source_info;time_p;time_s;time_s_min;time_s_avg;time_s_max;cov_deviation;nb_threads;cats;
+9;lbm;propagation._omp_fn.0;;45.22;19.18;;;;;;"100,0,0,0,0,0,0,0,0,0";
+10;lbm;collision._omp_fn.0;;42.49;18.02;;;;;;"100,0,0,0,0,0,0,0,0,0";
+265;libgomp.so.1.0.0;gomp_barrier_wait_end;;6.42;2.72;;;;;;"0,0,100,0,0,0,0,0,0,0";
+269;libgomp.so.1.0.0;gomp_team_barrier_wait_end;;5.77;2.45;;;;;;"0,0,100,0,0,0,0,0,0,0";
+271;libgomp.so.1.0.0;gomp_team_barrier_wait_final;;0.02;0.01;;;;;;"0,0,100,0,0,0,0,0,0,0";
+266;libgomp.so.1.0.0;gomp_barrier_wait;;0.02;0.01;;;;;;"0,0,100,0,0,0,0,0,0,0";
+-1;kernel;unknown_kernel_region;;0.02;0.01;;;;;;"0,0,0,0,100,0,0,0,0,0";
+229;libgomp.so.1.0.0;gomp_thread_start;;0.01;0;;;;;;"0,0,100,0,0,0,0,0,0,0";
+173;libgomp.so.1.0.0;gomp_ialias_omp_get_num_threads;;0.01;0;;;;;;"0,0,100,0,0,0,0,0,0,0";

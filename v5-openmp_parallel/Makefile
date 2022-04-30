@@ -26,7 +26,7 @@ build: target/lbm target/display
 
 run: target/lbm
 	@rm -f $(GIF)
-	$(MPICMD) $(MPIFLAGS) $^
+	OMP_NUM_THREADS=2 $(MPICMD) $(MPIFLAGS) $^
 
 gif: $(GIF)
 	@brave $^ &
@@ -59,7 +59,7 @@ $(DEPS)/%.o: $(SRC)/%.c
 
 target/lbm: $(LBM_OBJECTS) $(SRC)/main.c
 	@mkdir -p target
-	$(MPICC) $(CFLAGS) $(OFLAGS) $^ -o $@ $(LDFLAGS)
+	$(MPICC) $(DEF) $(CFLAGS) $(OFLAGS) $^ -o $@ $(LDFLAGS)
 
 target/display: $(SRC)/display.c
 	@mkdir -p target

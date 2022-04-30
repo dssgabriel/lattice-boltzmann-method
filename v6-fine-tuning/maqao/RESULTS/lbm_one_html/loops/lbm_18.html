@@ -1,0 +1,2527 @@
+<!DOCTYPE html>
+<html lang="en-US"><head><title>OV - lbm - Loop 18 - lbm</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" media="screen" href="../css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" href="../css/themes/redmond_custom/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="../css/themes/redmond_custom/jquery.jqplot.min.css" />
+<link rel="stylesheet" type="text/css" href="../css/MAQAO_theme.css" />
+<link rel="stylesheet" type="text/css" href="../css/maqao_modal.css" />
+<link rel="stylesheet" type="text/css" href="../css/global.css" />
+<link rel="stylesheet" type="text/css" href="../css/maqao_menu.css" />
+<script src="../js/jquery-1.9.0.min.js" ></script>
+<script src="../js/jquery-ui-1.10.3.custom.min.js" ></script>
+<script src="../js/grid.locale-en.js" ></script>
+<script src="../js/jquery.jqGrid.min.js" ></script>
+<script src="../js/d3.min.js" ></script>
+<script class="include" src="../js/jquery.jqplot.min.js"></script>
+<script class="include" src="../js/jqplot.pieRenderer.min.js"></script>
+<script class="include" src="../js/jqplot.barRenderer.min.js"></script>
+<script class="include" src="../js/jqplot.categoryAxisRenderer.min.js"></script>
+<script class="include" src="../js/jqplot.pointLabels.min.js"></script>
+<script class="include" src="../js/jqplot.cursor.min.js"></script>
+<script class="include" src="../js/jqplot.canvasTextRenderer.min.js"></script>
+<script class="include" src="../js/jqplot.canvasAxisTickRenderer.min.js"></script>
+<script class="include" src="../js/jqplot.canvasAxisLabelRenderer.min.js"></script>
+<script class="include" src="../js/jqplot.enhancedLegendRenderer.min.js"></script>
+<script class="include" src="../js/jqplot.highlighter.min.js"></script>
+<script class="include" src="../js/maqao_menu.js"></script>
+<script>
+$( function() {
+  $( document ).tooltip({
+    content: function() {
+      if ($(this).hasClass ("tooltip-maqao")
+      ||  $(this).hasClass ("tooltip-maqao-button")) {
+        return $(this).attr('title');
+      }
+    },
+    position: {
+      my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+          $( this ).css( position );
+          $( "<div>" )
+            .addClass( "arrow-tt" )
+            .addClass( feedback.vertical )
+            .addClass( feedback.horizontal )
+            .appendTo( this );
+        }
+      }
+  });
+} );
+
+// Code from https://www.htmlgoodies.com/beyond/javascript/article.php/3724571/Using-Multiple-JavaScript-Onload-Functions.htm
+function addLoadEvent(func) {
+  var oldonload = window.onload;
+  if (typeof window.onload != 'function') {
+    window.onload = func;
+  } else {
+    window.onload = function() {
+      if (oldonload) {
+        oldonload();
+      }
+      func();
+    }
+  }
+}
+function loadCSS(filename){ 
+  var file = document.createElement("link");
+  file.setAttribute("rel", "stylesheet");
+  file.setAttribute("type", "text/css");
+  file.setAttribute("href", filename);
+  document.head.appendChild(file);
+}
+addLoadEvent(function(){
+  var theme = localStorage.getItem("__MAQAO_OV_theme__");
+  if (theme) {
+    loadCSS("../css/"+theme+".css");
+  }
+  else {
+    localStorage.setItem("__MAQAO_OV_theme__", "MAQAO_theme");
+    loadCSS("../css/MAQAO_theme.css");
+  }
+});
+</script>
+</head><body>
+<div id="page_title"><img alt="MAQAO" id="maqao_logo" src="../images/MAQAO_small_logo.png"/><ul id="maqao_menu"><li ><a  href="../index.html">Global</a><ul><li ><a  href="../config.html">Configurations</a></li><li ><a  href="../log.html">Logs</a></li></ul></li><li ><a  href="../application.html">Application</a></li><li ><a  href="../fcts_and_loops.html">Functions</a></li><li ><a  href="../loops_index.html">Loops</a></li><li ><a class="_current_page _first_menu_level" href="../loops/lbm_18.html">Loop 18</a></li><li ><a  href="../topology.html">Topology</a></li></ul>
+<span><img alt="options" id="menu_options_icon" src="../images/gear_20.png"  onclick="__open_options ()"/></span>
+</div>
+<script>
+function __change_theme () {
+  var new_theme = document.getElementById("select_theme").value;
+  localStorage.setItem("__MAQAO_OV_theme__", new_theme);
+    loadCSS("../css/"+new_theme+".css");
+}
+function __open_options () {
+  var elem = document.getElementById ("options_configuration");
+  if (elem.dataset.open == "false") {
+    elem.dataset.open = "true";
+    elem.style.display = "block";
+  }
+  else {
+    elem.dataset.open = "false";
+    elem.style.display = "none";
+  }
+}
+</script>
+<div id="anchor_file_start"></div>
+<div id="maqao_content">
+<div>
+  <div id="spacer_page_title" ></div>
+  <div id="options_configuration" data-open="false" style="display:none;">
+    <h3 id="options_configuration_header">Report Configuration</h3>
+    <span style="margin-left:10px;"><label for="select_theme">Theme: </label>    <select name="theme" id="select_theme" onchange="__change_theme ()">  <option value="MAQAO_theme">MAQAO_theme</option>  <option value="darkgrey">darkgrey</option>  <option value="cyan">cyan</option></select></span></div>
+</div>
+<script>
+document.getElementById("spacer_page_title").style.height = (document.getElementById("page_title").clientHeight + 25)+"px";
+var obj = document.getElementById("page_title");
+if (obj) {
+  var elems = document.getElementsByClassName ("_first_menu_level")
+  if (obj.clientHeight < 90) {
+    for (var i = 0; i < elems.length; i++) {
+      elems.item(i).style.borderBottomLeftRadius = "";
+      elems.item(i).style.borderBottomRightRadius = "";
+    }
+  }
+  else {
+    for (var i = 0; i < elems.length; i++) {
+      elems.item(i).style.borderBottomLeftRadius = "10px";
+      elems.item(i).style.borderBottomRightRadius = "10px";
+    }
+  }
+}
+</script>
+<div id="main_section_div" data-run="1" data-ldbal="regular" data-path="0" data-maxpath="2" data-bucket="0" data-maxbucket="0" data-variants=',"Original":true' >
+<!-- ========================== Summary about the loop ========================== -->
+  <table id="object_summary" style="width:100%;border: 1px solid var(--table_border);border-radius:5px;color:var(--header_font);background:var(--header_background);margin-bottom:15px;">
+    <tr>
+      <th><button class="tooltip-maqao-button" onclick="window.location.href='lbm_4.html';" title="Go to previous loop: 4" >Prev</button></th>
+      <th>Loop Id: 18</th>
+      <th>Module: lbm</th>
+      <th>Source: :0-0</th>
+      <th>Coverage: 0.22%</th>
+      <th><button class="tooltip-maqao-button" onclick="window.location.href='lbm_3.html';" title="Go to next loop: 3" >Next</button></th>
+    </tr>
+  </table>
+  <div class="drag-container" id="main_section_content">
+    <!-- =============================== Left part ================================== -->
+    <div class="panel-one _fixed_box" id="drag-left">
+      <div id="leftpanelheader" style="background:var(--header_background_selected);color:var(--header_font);text-align:center;height:30px;">
+        <div style="display:table;width:100%;height:30px;text-align:center">
+          <div style="display:table-row">
+            <div style="display:table-cell;vertical-align:middle;">
+              <select id="leftpanelselector" style="cursor:pointer;" size="1" onchange="_changepanel ('leftpanelcontent', this, 'rightpanelselector', 'leftpanelhelp');" autocomplete="off">
+                <option value="panel_src" selected>Source Code</option>
+                <option value="panel_asm" >Assembly Code</option>
+                <option value="panel_callchains">Callchains</option>
+                <option value="panel_ldbal">Load Distribution</option>
+                <option value="panel_cqa" disabled>CQA</option>
+                <option value="panel_cqa_adv">CQA Advanced</option>
+              </select>
+            </div>
+            <div style="display:table-cell;vertical-align:middle;width:20px;">
+              <span id="leftpanelextract" class="tooltip-maqao-button extract-maqao" title="Open on a new tab" onclick="extract_panel (leftpanelselector);"></span>
+            </div>
+            <div style="display:table-cell;vertical-align:middle;width:20px;">
+              <span id="leftpanelhelp" class="tooltip-maqao-button help-maqao" title=""></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="leftpanelcontent" style="overflow: auto;"></div>
+    </div>
+    <!-- ================================ Drag bar =================================== -->
+    <div class="dragbar" id="dragbar">
+    </div>
+    <!-- =============================== Right part ================================== -->
+    <div class="panel-two _fixed_box" id="drag-right">
+      <div id="rightpanelheader" style="background:var(--header_background_selected);text-align:center;height:30px;">
+        <div style="display:table;width:100%;height:30px;text-align:center">
+          <div style="display:table-row">
+            <div style="display:table-cell;vertical-align:middle;">
+              <select id="rightpanelselector" style="cursor:pointer;" size="1" onchange="_changepanel ('rightpanelcontent', this, 'leftpanelselector', 'rightpanelhelp');" autocomplete="off">
+                <option value="panel_src" disabled>Source Code</option>
+                <option value="panel_asm" >Assembly Code</option>
+                <option value="panel_callchains">Callchains</option>
+                <option value="panel_ldbal">Load Distribution</option>
+                <option value="panel_cqa" selected>CQA</option>
+                <option value="panel_cqa_adv">CQA Advanced</option>
+              </select>
+            </div>
+            <div style="display:table-cell;vertical-align:middle;width:20px;">
+              <span id="rightpanelextract" class="tooltip-maqao-button extract-maqao" title="Open on a new tab" onclick="extract_panel (rightpanelselector);"></span>
+            </div>
+            <div style="display:table-cell;vertical-align:middle;width:20px;">
+              <span id="rightpanelhelp" class="tooltip-maqao-button help-maqao" title=""></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="rightpanelcontent" style="overflow: auto;"></div>
+    </div>
+  </div>
+</div>
+    <!-- ========================== Start Of Storage ============================= -->
+<div id="_ONEVIEW_inner_storage" style="display:none;">
+<div class="panelcontent" id="OV_panel_asm"><div>
+  <div id="enable_groups_button" class="tooltip-maqao" title="Check the box to display the group analysis. A group is a set of instructions accessing to the same memory area" data-groups="off" onclick="enable_groups (this);">Show groups analysis</div>
+  <table style="width:100%;" id="table_asm">
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3f60 INC	%RBP</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3f63 MOV	%ECX,%R10D</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3f66 CMP	%RBP,%R10</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3f69 JBE	4078</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3f6f MOV	%R9D,%EAX</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3f72 IMUL	%R14D,%EAX</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#ffb366;word-break:break-all;"><span class="tooltip-maqao" title="Size: 2&lt;br&gt;Pattern: LL&lt;br&gt;Span: 16&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 2&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 12&lt;br&gt;Accessed memory without overlapping: 12&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x3f76 MOV	(%R13),%RSI    [2]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3f7a ADD	%EBP,%EAX</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3f7c LEA	(%RAX,%RAX,8),%EDI</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3f7f LEA	(%RSI,%RDI,8),%R8</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3f83 TEST	%R8,%R8</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3f86 JE	40e6</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#d98c8c;word-break:break-all;"><span class="tooltip-maqao" title="Size: 9&lt;br&gt;Pattern: LLLLLLLLL&lt;br&gt;Span: 72&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 1&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 72&lt;br&gt;Accessed memory without overlapping: 72&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x3f8c VMOVSD	0x28(%R8),%XMM8    [1]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#d98c8c;word-break:break-all;"><span class="tooltip-maqao" title="Size: 9&lt;br&gt;Pattern: LLLLLLLLL&lt;br&gt;Span: 72&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 1&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 72&lt;br&gt;Accessed memory without overlapping: 72&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x3f92 VMOVSD	0x8(%R8),%XMM1    [1]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#d98c8c;word-break:break-all;"><span class="tooltip-maqao" title="Size: 9&lt;br&gt;Pattern: LLLLLLLLL&lt;br&gt;Span: 72&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 1&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 72&lt;br&gt;Accessed memory without overlapping: 72&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x3f98 VMOVSD	0x10(%R8),%XMM2    [1]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#d98c8c;word-break:break-all;"><span class="tooltip-maqao" title="Size: 9&lt;br&gt;Pattern: LLLLLLLLL&lt;br&gt;Span: 72&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 1&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 72&lt;br&gt;Accessed memory without overlapping: 72&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x3f9e VMOVSD	0x18(%R8),%XMM5    [1]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#d98c8c;word-break:break-all;"><span class="tooltip-maqao" title="Size: 9&lt;br&gt;Pattern: LLLLLLLLL&lt;br&gt;Span: 72&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 1&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 72&lt;br&gt;Accessed memory without overlapping: 72&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x3fa4 VMOVSD	0x20(%R8),%XMM4    [1]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#d98c8c;word-break:break-all;"><span class="tooltip-maqao" title="Size: 9&lt;br&gt;Pattern: LLLLLLLLL&lt;br&gt;Span: 72&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 1&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 72&lt;br&gt;Accessed memory without overlapping: 72&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x3faa VADDSD	(%R8),%XMM1,%XMM0    [1]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3faf VADDSD	%XMM5,%XMM2,%XMM9</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3fb3 VADDSD	%XMM8,%XMM4,%XMM11</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#d98c8c;word-break:break-all;"><span class="tooltip-maqao" title="Size: 9&lt;br&gt;Pattern: LLLLLLLLL&lt;br&gt;Span: 72&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 1&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 72&lt;br&gt;Accessed memory without overlapping: 72&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x3fb8 VMOVSD	0x38(%R8),%XMM7    [1]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#d98c8c;word-break:break-all;"><span class="tooltip-maqao" title="Size: 9&lt;br&gt;Pattern: LLLLLLLLL&lt;br&gt;Span: 72&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 1&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 72&lt;br&gt;Accessed memory without overlapping: 72&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x3fbe VMOVSD	0x30(%R8),%XMM3    [1]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3fc4 VADDSD	%XMM9,%XMM0,%XMM10</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3fc9 VADDSD	%XMM3,%XMM11,%XMM12</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3fcd VADDSD	%XMM7,%XMM4,%XMM4</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3fd1 VADDSD	%XMM8,%XMM2,%XMM2</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#d98c8c;word-break:break-all;"><span class="tooltip-maqao" title="Size: 9&lt;br&gt;Pattern: LLLLLLLLL&lt;br&gt;Span: 72&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 1&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 72&lt;br&gt;Accessed memory without overlapping: 72&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x3fd6 VMOVSD	0x40(%R8),%XMM6    [1]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3fdc VADDSD	%XMM12,%XMM10,%XMM13</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3fe1 VADDSD	%XMM6,%XMM7,%XMM14</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3fe5 VADDSD	%XMM8,%XMM1,%XMM1</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3fea VADDSD	%XMM3,%XMM5,%XMM5</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3fee VSUBSD	%XMM4,%XMM2,%XMM8</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3ff2 VSUBSD	%XMM6,%XMM3,%XMM3</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3ff6 VADDSD	%XMM14,%XMM13,%XMM15</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3ffb VSUBSD	%XMM7,%XMM6,%XMM9</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x3fff VADDSD	%XMM3,%XMM8,%XMM7</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4003 VSUBSD	%XMM5,%XMM1,%XMM0</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4007 VDIVSD	%XMM15,%XMM7,%XMM6</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x400c VADDSD	%XMM9,%XMM0,%XMM10</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4011 VDIVSD	%XMM15,%XMM10,%XMM11</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4016 VMULSD	%XMM6,%XMM6,%XMM12</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x401a VFMADD132SD	%XMM11,%XMM12,%XMM11</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x401f VSQRTSD	%XMM11,%XMM11,%XMM11</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4024 VUNPCKLPD	%XMM15,%XMM11,%XMM13</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4029 VCVTPD2PS	%XMM13,%XMM14</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#b3ccff;word-break:break-all;"><span class="tooltip-maqao" title="Size: 1&lt;br&gt;Pattern: S&lt;br&gt;Span: 8&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 1&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 8&lt;br&gt;Accessed memory without overlapping: 8&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x402e VMOVLPS	%XMM14,(%R15,%RDX,8)    [3]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4034 INC	%RDX</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4037 CMP	$0x1000,%RDX</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x403e JA	40c7</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4044 JNE	3f60</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x404a MOV	%R12,%RCX</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x404d MOV	$0x1000,%EDX</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4052 MOV	$0x8,%ESI</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4057 MOV	%R15,%RDI</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x405a CALL	11d0 &lt;fwrite@plt&gt;</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="background-color:#ffb366;word-break:break-all;"><span class="tooltip-maqao" title="Size: 2&lt;br&gt;Pattern: LL&lt;br&gt;Span: 16&lt;br&gt;Head: 0&lt;br&gt;Unroll factor: 2&lt;br&gt;Stride status: Not mono block loop&lt;br&gt;Stride: 0&lt;br&gt;Accessed memory status: Success&lt;br&gt;Accessed memory: 12&lt;br&gt;Accessed memory without overlapping: 12&lt;br&gt;Accessed memory reused: 0&lt;br&gt;"><pre>0x405f MOV	0xc(%R13),%R9D    [2]</pre></span></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4063 INC	%RBP</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4066 LEA	-0x1(%R9),%ECX</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x406a MOV	%ECX,%R10D</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x406d XOR	%EDX,%EDX</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x406f CMP	%RBP,%R10</pre></td></tr>
+<tr onmouseover="panel_asm_onmouseover_tr (this)" onmouseout="panel_asm_onmouseout_tr (this)" data-src="0"><td class="panel_asm_0" style="word-break:break-all;" ><pre>0x4072 JA	3f6f</pre></td></tr>
+  </table>
+  <script>
+function panel_asm_onmouseover_tr (obj) {
+  var src = document.getElementsByClassName("panel_src_"+obj.dataset.src)
+  if (src != null && src.length > 0) {
+    src = src[0];
+    src.style.background = "var(--table_row_background_hover)";
+  }
+}
+function panel_asm_onmouseout_tr (obj) {
+  var src = document.getElementsByClassName("panel_src_"+obj.dataset.src)
+  if (src != null && src.length > 0) {
+    src = src[0];
+    src.style.background = "";
+  }
+}
+function asm_onresize () {
+}
+function asm_loadhelp (divId) {
+  var e = document.getElementById (divId);
+  if (e != null) {
+    e.setAttribute ("title", "Assembly code of the object (loop / function).<br/>It is analyzed using MAQAO core");
+  }
+}
+function enable_groups (div) {
+  if (div.dataset.groups == "off") {
+    div.dataset.groups = "on";
+    div.textContent = "Hide groups analysis";
+    var table_asm = document.getElementById("table_asm");
+    for (var i = 0, row; row = table_asm.rows[i]; i++) {
+      for (var j = 0, col; col = row.cells[j]; j++) {
+        col.innerHTML = col.dataset.contentON;
+        col.style["background-color"] = col.dataset.bgcolor;
+      }
+    }
+  }
+  else {
+    div.dataset.groups = "off";
+    div.textContent = "Show groups analysis";
+    var table_asm = document.getElementById("table_asm");
+    for (var i = 0, row; row = table_asm.rows[i]; i++) {
+      for (var j = 0, col; col = row.cells[j]; j++) {
+        col.innerHTML = col.dataset.contentOFF;
+        col.style["background-color"] = "";
+      }
+    }
+  }
+}
+// Initialize some data used in groups display
+var table_asm = document.getElementById("table_asm");
+for (var i = 0, row; row = table_asm.rows[i]; i++) {
+  for (var j = 0, col; col = row.cells[j]; j++) {
+      if (col.style["background-color"] != ""){
+         col.dataset.bgcolor = col.style["background-color"];
+         col.dataset.contentOFF = col.firstChild.innerHTML.replace(/\[[0-9]+\]/g, "");
+    }
+    else {
+      col.dataset.contentOFF = col.innerHTML;
+    }
+    col.dataset.contentON = col.innerHTML;
+    col.style["background-color"] = "";
+    col.innerHTML = col.dataset.contentOFF;
+  }
+}
+  </script>
+  <style>
+#enable_groups_button {
+  border: 2px solid var(--table_border);
+  padding: 5px;
+  margin: 5px;
+  width: 155px;
+  text-align:center;
+}
+#enable_groups_button:hover {
+  color: var(--header_font_hover);
+}
+#table_asm td {
+  border-left:8px solid var(--background);
+  padding-left: 5px; 
+}
+#table_asm td:hover {
+  border-left-color: var(--table_border);
+}
+  </style>
+</div></div>
+<div class="panelcontent" id="OV_panel_src">
+  <table id="panel_src_table_src" style="width:100%;">
+    <tr><td><pre>  ***  This Panel is Intentionally Left Blank.  ***
+
+It is due to a lack of debug symbols in the given object<br>(loop or function).</pre></td></tr>
+  </table>
+  <script>
+function panel_src_onmouseover_tr (obj) {
+  if (obj.parentNode.classList.contains ("src_is_locked") == false) {
+    var src = document.getElementsByClassName("panel_asm_"+obj.dataset.src)
+    for (var i = 0; i < src.length; i++) {
+      src[i].style.borderLeftColor = "var(--table_border)";
+    }
+    obj.style.background = "var(--table_row_background_hover)";
+  }
+  else if (obj.firstChild.classList.contains ("src_locked") == true) {
+    obj.style.background = "var(--table_row_background_hover)";
+  }
+}
+function panel_src_onmouseout_tr (obj) {
+  if (obj.parentNode.classList.contains ("src_is_locked") == false) {
+    var src = document.getElementsByClassName("panel_asm_"+obj.dataset.src)
+    for (var i = 0; i < src.length; i++) {
+      src[i].style.borderLeftColor = "";
+    }
+  }
+  obj.style.background = "";
+}
+function panel_src_onclick (obj) {
+  if (obj.firstChild.classList.contains ("src_locked") == true) {
+    obj.parentNode.classList.remove ("src_is_locked");
+    obj.firstChild.classList.remove ("src_locked");
+  }
+  else if (obj.parentNode.classList.contains ("src_is_locked") == true) {
+    var old = document.getElementsByClassName ("src_locked");
+    old = old[0];
+    old.classList.remove ("src_locked");
+    obj.parentNode.classList.remove ("src_is_locked");
+    panel_src_onmouseout_tr (old.parentNode);
+    panel_src_onmouseover_tr (obj);
+    obj.firstChild.classList.add ("src_locked");
+    obj.parentNode.classList.add ("src_is_locked");
+  }
+  else {
+    obj.parentNode.classList.add ("src_is_locked");
+    obj.firstChild.classList.add ("src_locked");
+  }
+}
+function src_onresize () {
+}
+function src_loadhelp (divId) {
+  var e = document.getElementById (divId);
+  if (e != null) {
+    e.setAttribute ("title", "Source code of the loop.<br/>It is extracted using MAQAO core.");
+  }
+}
+  </script>
+  <style>
+  pre {
+   margin: 0px;
+  }
+  .src_locked {
+    border: 1px solid var(--table_border);
+  }
+  </style>
+</div>
+<div class="panelcontent" id="OV_panel_callchains">
+<div class="_div_table"><table id="_treed_table_3" class="_treed_table"><tr><th class=" _left tooltip-maqao" title="Coverage of the callchain">Coverage (%)</th><th class=" tooltip-maqao" title="Name of the function">Name</th><th class=" tooltip-maqao" title="Location of the function source code">Source Location</th><th class=" tooltip-maqao" title="Name of the module (binary file) that contains the function">Module</th></tr>
+</table></div>
+  <script>
+function src_onresize () {
+}
+function src_loadhelp (divId) {
+  var e = document.getElementById (divId);
+  if (e != null) {
+    e.setAttribute ("title", "Callchains extracted using LPROF.");
+  }
+}
+  </script>
+</div>
+<div class="panelcontent" id="OV_panel_ldbal">
+  <table style="width:100%;">
+    <tr>
+      <td style="width:40%;" />
+      <td style="text-align:center;">
+        <select id="ldbal_select_type" style="cursor:pointer;" size="1" onchange="set_ldbal_input ();" autocomplete="off">
+          <option value="regular">Load Distribution</option>
+          <option value="sorted">Sorted Load Distribution</option>
+          <option value="all">Load Distribution All Threads</option>
+        </select>
+      </td>
+      <td>
+        <select id="ldbal_select_run" size="1" onchange="set_ldbal_input ();" autocomplete="off" style="cursor:pointer;">
+           <option value="1">Run 1
+        </select>
+      </td>
+      <td style="width:40%;" />
+    </tr>
+  </table>
+<div style="margin: 10px; overflow-x:auto; overflow-y:hidden;"><div id="chart_cat_24" style="height:500px" ></div></div>
+<script class="code">
+</script>
+<div style="margin: 10px; overflow-x:auto; overflow-y:hidden;"><div id="chart_cat_25" style="height:500px" ></div></div>
+<script class="code">
+</script>
+  <script>
+function set_ldbal_input () {
+  var selector_type = document.getElementById ("ldbal_select_type");
+  var selector_run  = document.getElementById ("ldbal_select_run");
+  document.getElementById ("main_section_div").dataset.ldbal = selector_type.value;
+  document.getElementById ("main_section_div").dataset.run = selector_run.value;
+  // Clear placeholder content and update their size
+  document.getElementById("chart_cat_24").innerHTML = "";
+  var _width = Math.floor(document.getElementById("chart_cat_24").getBoundingClientRect().width);
+  document.getElementById("chart_cat_25").innerHTML = "";
+  var _width = Math.floor(document.getElementById("chart_cat_25").getBoundingClientRect().width);
+  // According to selectors, draw both charts
+  if (selector_type.value == "regular"
+  &&  selector_run.value  == "1") {
+  $(document).ready(function(){
+    var ordinals = ['hyperion_46399_46399'];
+    var data = [{value: 0.86}];
+    var widthgl  = _width;
+    var widthin  = _width;
+    var heightgl = 400;
+    var heightin = 420;
+    let margin = {
+      top:    10,
+      right:  30,
+      bottom: 20,
+      left:   50
+    },
+    width = widthgl - margin.left - margin.right,
+    height = heightgl - margin.top - margin.bottom,
+    radius = (Math.min(width, height) / 2) - 10,
+    node;
+    const svg = d3.select('#chart_cat_24')
+        .append('svg')
+        .attr('width', widthin)
+        .attr('height', heightin)
+        .append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        .call(
+          d3.zoom()
+            .translateExtent([[0,0], [width, height] ])
+            .extent([[0, 0], [width, height] ])
+          .on('zoom', zoom)
+        ).on("dblclick.zoom", null);
+    let x = d3.scaleLinear().range([0, width])
+    let y = d3.scaleLinear().range([height, 0])
+    let color = d3.scaleOrdinal(d3.schemeCategory10)
+    let xScale = x.domain([-1, ordinals.length])
+    let yScale = y.domain([0, d3.max(data, function(d){return d.value})])
+    let xBand = d3.scaleBand().domain(d3.range(-1, ordinals.length)).range([0, width])
+    svg.append('rect')
+      .attr('class', 'zoom-panel')
+      .attr('width', width)
+      .attr('height', height)
+      .style('fill', 'var(--background)')
+    let xAxis = svg.append('g')
+      .attr('class', 'xAxis')
+      .attr('transform', `translate(0, ${height})`)
+      .call(
+        d3.axisBottom(xScale).tickFormat((d, e) => {
+          return ordinals[d]
+        })
+      );
+    svg.append("text")
+      .attr("transform",
+            "translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("MAQAO thread rank");
+    let yAxis = svg.append('g')
+      .attr('class', 'yAxis')
+      .call(d3.axisLeft(yScale));
+    yAxis.selectAll(".tick text").attr("fill","var(--font)");
+    yAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    yAxis.selectAll(".domain").attr("stroke","var(--font)");
+    xAxis.selectAll(".tick text").attr("fill","var(--font)");
+    xAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    xAxis.selectAll(".domain").attr("stroke","var(--font)");
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("Coverage");
+    let bars = svg.append('g')
+      .attr('clip-path','url(#my-clip-path)')
+      .attr('id', 'zoom_chart_24')
+      .selectAll('.bar')
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('id', function (d, i){ return 'zoom_chart_24_'+i;})
+      .attr('x', function(d, i){
+        return xScale(i) - xBand.bandwidth()*0.9/2
+      })
+      .attr('y', function(d, i){
+        return yScale(d.value)
+      })
+      .attr('width', xBand.bandwidth()*0.9)
+      .attr('height', function(d){
+        return height - yScale(d.value)
+      })
+    let defs = svg.append('defs')
+      defs.append('clipPath')
+        .attr('id', 'my-clip-path')
+        .append('rect')
+        .attr('width', width)
+        .attr('height', height)
+      let hideTicksWithoutLabel = function() {
+        d3.selectAll('.xAxis .tick text').each(function(d){
+          if(this.innerHTML === '') {
+            this.parentNode.style.display = 'none';
+          }
+        })
+      }
+      function zoom() {
+        if (d3.event.transform.k < 1) {
+          d3.event.transform.k = 1;
+          return;
+        }
+      xAxis.call(
+        d3.axisBottom(d3.event.transform.rescaleX(xScale)).tickFormat((d, e, target) => {
+          if (Math.floor(d) === d3.format(".1f")(d)) return ordinals[Math.floor(d)]
+            return ordinals[d];
+        })
+      )
+      hideTicksWithoutLabel()
+        bars.attr("transform", "translate(" + d3.event.transform.x+",0)scale(" + d3.event.transform.k + ",1)")
+    }
+  });
+  $("#zoom_chart_24_0").click( function () {
+    window.open("../topo/run_0_hyperion_46399_46399.html");
+  });
+  }
+  if (selector_type.value == "regular"
+  &&  selector_run.value  == "1") {
+  $(document).ready(function(){
+    var ordinals = ['hyperion_46399_46399'];
+    var data = [{value: 0.37}];
+    var widthgl  = _width;
+    var widthin  = _width;
+    var heightgl = 400;
+    var heightin = 420;
+    let margin = {
+      top:    10,
+      right:  30,
+      bottom: 20,
+      left:   50
+    },
+    width = widthgl - margin.left - margin.right,
+    height = heightgl - margin.top - margin.bottom,
+    radius = (Math.min(width, height) / 2) - 10,
+    node;
+    const svg = d3.select('#chart_cat_25')
+        .append('svg')
+        .attr('width', widthin)
+        .attr('height', heightin)
+        .append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        .call(
+          d3.zoom()
+            .translateExtent([[0,0], [width, height] ])
+            .extent([[0, 0], [width, height] ])
+          .on('zoom', zoom)
+        ).on("dblclick.zoom", null);
+    let x = d3.scaleLinear().range([0, width])
+    let y = d3.scaleLinear().range([height, 0])
+    let color = d3.scaleOrdinal(d3.schemeCategory10)
+    let xScale = x.domain([-1, ordinals.length])
+    let yScale = y.domain([0, d3.max(data, function(d){return d.value})])
+    let xBand = d3.scaleBand().domain(d3.range(-1, ordinals.length)).range([0, width])
+    svg.append('rect')
+      .attr('class', 'zoom-panel')
+      .attr('width', width)
+      .attr('height', height)
+      .style('fill', 'var(--background)')
+    let xAxis = svg.append('g')
+      .attr('class', 'xAxis')
+      .attr('transform', `translate(0, ${height})`)
+      .call(
+        d3.axisBottom(xScale).tickFormat((d, e) => {
+          return ordinals[d]
+        })
+      );
+    svg.append("text")
+      .attr("transform",
+            "translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("MAQAO thread rank");
+    let yAxis = svg.append('g')
+      .attr('class', 'yAxis')
+      .call(d3.axisLeft(yScale));
+    yAxis.selectAll(".tick text").attr("fill","var(--font)");
+    yAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    yAxis.selectAll(".domain").attr("stroke","var(--font)");
+    xAxis.selectAll(".tick text").attr("fill","var(--font)");
+    xAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    xAxis.selectAll(".domain").attr("stroke","var(--font)");
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("Time");
+    let bars = svg.append('g')
+      .attr('clip-path','url(#my-clip-path)')
+      .attr('id', 'zoom_chart_25')
+      .selectAll('.bar')
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('id', function (d, i){ return 'zoom_chart_25_'+i;})
+      .attr('x', function(d, i){
+        return xScale(i) - xBand.bandwidth()*0.9/2
+      })
+      .attr('y', function(d, i){
+        return yScale(d.value)
+      })
+      .attr('width', xBand.bandwidth()*0.9)
+      .attr('height', function(d){
+        return height - yScale(d.value)
+      })
+    let defs = svg.append('defs')
+      defs.append('clipPath')
+        .attr('id', 'my-clip-path')
+        .append('rect')
+        .attr('width', width)
+        .attr('height', height)
+      let hideTicksWithoutLabel = function() {
+        d3.selectAll('.xAxis .tick text').each(function(d){
+          if(this.innerHTML === '') {
+            this.parentNode.style.display = 'none';
+          }
+        })
+      }
+      function zoom() {
+        if (d3.event.transform.k < 1) {
+          d3.event.transform.k = 1;
+          return;
+        }
+      xAxis.call(
+        d3.axisBottom(d3.event.transform.rescaleX(xScale)).tickFormat((d, e, target) => {
+          if (Math.floor(d) === d3.format(".1f")(d)) return ordinals[Math.floor(d)]
+            return ordinals[d];
+        })
+      )
+      hideTicksWithoutLabel()
+        bars.attr("transform", "translate(" + d3.event.transform.x+",0)scale(" + d3.event.transform.k + ",1)")
+    }
+  });
+  $("#zoom_chart_25_0").click( function () {
+    window.open("../topo/run_0_hyperion_46399_46399.html");
+  });
+  }
+  if (selector_type.value == "sorted"
+  &&  selector_run.value  == "1") {
+  $(document).ready(function(){
+    var ordinals = ['hyperion_46399_46399'];
+    var data = [{value: 0.86}];
+    var widthgl  = _width;
+    var widthin  = _width;
+    var heightgl = 400;
+    var heightin = 420;
+    let margin = {
+      top:    10,
+      right:  30,
+      bottom: 20,
+      left:   50
+    },
+    width = widthgl - margin.left - margin.right,
+    height = heightgl - margin.top - margin.bottom,
+    radius = (Math.min(width, height) / 2) - 10,
+    node;
+    const svg = d3.select('#chart_cat_24')
+        .append('svg')
+        .attr('width', widthin)
+        .attr('height', heightin)
+        .append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        .call(
+          d3.zoom()
+            .translateExtent([[0,0], [width, height] ])
+            .extent([[0, 0], [width, height] ])
+          .on('zoom', zoom)
+        ).on("dblclick.zoom", null);
+    let x = d3.scaleLinear().range([0, width])
+    let y = d3.scaleLinear().range([height, 0])
+    let color = d3.scaleOrdinal(d3.schemeCategory10)
+    let xScale = x.domain([-1, ordinals.length])
+    let yScale = y.domain([0, d3.max(data, function(d){return d.value})])
+    let xBand = d3.scaleBand().domain(d3.range(-1, ordinals.length)).range([0, width])
+    svg.append('rect')
+      .attr('class', 'zoom-panel')
+      .attr('width', width)
+      .attr('height', height)
+      .style('fill', 'var(--background)')
+    let xAxis = svg.append('g')
+      .attr('class', 'xAxis')
+      .attr('transform', `translate(0, ${height})`)
+      .call(
+        d3.axisBottom(xScale).tickFormat((d, e) => {
+          return ordinals[d]
+        })
+      );
+    svg.append("text")
+      .attr("transform",
+            "translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("MAQAO thread rank");
+    let yAxis = svg.append('g')
+      .attr('class', 'yAxis')
+      .call(d3.axisLeft(yScale));
+    yAxis.selectAll(".tick text").attr("fill","var(--font)");
+    yAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    yAxis.selectAll(".domain").attr("stroke","var(--font)");
+    xAxis.selectAll(".tick text").attr("fill","var(--font)");
+    xAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    xAxis.selectAll(".domain").attr("stroke","var(--font)");
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("Coverage");
+    let bars = svg.append('g')
+      .attr('clip-path','url(#my-clip-path)')
+      .attr('id', 'zoom_chart_24')
+      .selectAll('.bar')
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('id', function (d, i){ return 'zoom_chart_24_'+i;})
+      .attr('x', function(d, i){
+        return xScale(i) - xBand.bandwidth()*0.9/2
+      })
+      .attr('y', function(d, i){
+        return yScale(d.value)
+      })
+      .attr('width', xBand.bandwidth()*0.9)
+      .attr('height', function(d){
+        return height - yScale(d.value)
+      })
+    let defs = svg.append('defs')
+      defs.append('clipPath')
+        .attr('id', 'my-clip-path')
+        .append('rect')
+        .attr('width', width)
+        .attr('height', height)
+      let hideTicksWithoutLabel = function() {
+        d3.selectAll('.xAxis .tick text').each(function(d){
+          if(this.innerHTML === '') {
+            this.parentNode.style.display = 'none';
+          }
+        })
+      }
+      function zoom() {
+        if (d3.event.transform.k < 1) {
+          d3.event.transform.k = 1;
+          return;
+        }
+      xAxis.call(
+        d3.axisBottom(d3.event.transform.rescaleX(xScale)).tickFormat((d, e, target) => {
+          if (Math.floor(d) === d3.format(".1f")(d)) return ordinals[Math.floor(d)]
+            return ordinals[d];
+        })
+      )
+      hideTicksWithoutLabel()
+        bars.attr("transform", "translate(" + d3.event.transform.x+",0)scale(" + d3.event.transform.k + ",1)")
+    }
+  });
+  $("#zoom_chart_24_0").click( function () {
+    window.open("../topo/run_0_hyperion_46399_46399.html");
+  });
+  }
+  if (selector_type.value == "sorted"
+  &&  selector_run.value  == "1") {
+  $(document).ready(function(){
+    var ordinals = ['hyperion_46399_46399'];
+    var data = [{value: 0.37}];
+    var widthgl  = _width;
+    var widthin  = _width;
+    var heightgl = 400;
+    var heightin = 420;
+    let margin = {
+      top:    10,
+      right:  30,
+      bottom: 20,
+      left:   50
+    },
+    width = widthgl - margin.left - margin.right,
+    height = heightgl - margin.top - margin.bottom,
+    radius = (Math.min(width, height) / 2) - 10,
+    node;
+    const svg = d3.select('#chart_cat_25')
+        .append('svg')
+        .attr('width', widthin)
+        .attr('height', heightin)
+        .append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        .call(
+          d3.zoom()
+            .translateExtent([[0,0], [width, height] ])
+            .extent([[0, 0], [width, height] ])
+          .on('zoom', zoom)
+        ).on("dblclick.zoom", null);
+    let x = d3.scaleLinear().range([0, width])
+    let y = d3.scaleLinear().range([height, 0])
+    let color = d3.scaleOrdinal(d3.schemeCategory10)
+    let xScale = x.domain([-1, ordinals.length])
+    let yScale = y.domain([0, d3.max(data, function(d){return d.value})])
+    let xBand = d3.scaleBand().domain(d3.range(-1, ordinals.length)).range([0, width])
+    svg.append('rect')
+      .attr('class', 'zoom-panel')
+      .attr('width', width)
+      .attr('height', height)
+      .style('fill', 'var(--background)')
+    let xAxis = svg.append('g')
+      .attr('class', 'xAxis')
+      .attr('transform', `translate(0, ${height})`)
+      .call(
+        d3.axisBottom(xScale).tickFormat((d, e) => {
+          return ordinals[d]
+        })
+      );
+    svg.append("text")
+      .attr("transform",
+            "translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("MAQAO thread rank");
+    let yAxis = svg.append('g')
+      .attr('class', 'yAxis')
+      .call(d3.axisLeft(yScale));
+    yAxis.selectAll(".tick text").attr("fill","var(--font)");
+    yAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    yAxis.selectAll(".domain").attr("stroke","var(--font)");
+    xAxis.selectAll(".tick text").attr("fill","var(--font)");
+    xAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    xAxis.selectAll(".domain").attr("stroke","var(--font)");
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("Time");
+    let bars = svg.append('g')
+      .attr('clip-path','url(#my-clip-path)')
+      .attr('id', 'zoom_chart_25')
+      .selectAll('.bar')
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('id', function (d, i){ return 'zoom_chart_25_'+i;})
+      .attr('x', function(d, i){
+        return xScale(i) - xBand.bandwidth()*0.9/2
+      })
+      .attr('y', function(d, i){
+        return yScale(d.value)
+      })
+      .attr('width', xBand.bandwidth()*0.9)
+      .attr('height', function(d){
+        return height - yScale(d.value)
+      })
+    let defs = svg.append('defs')
+      defs.append('clipPath')
+        .attr('id', 'my-clip-path')
+        .append('rect')
+        .attr('width', width)
+        .attr('height', height)
+      let hideTicksWithoutLabel = function() {
+        d3.selectAll('.xAxis .tick text').each(function(d){
+          if(this.innerHTML === '') {
+            this.parentNode.style.display = 'none';
+          }
+        })
+      }
+      function zoom() {
+        if (d3.event.transform.k < 1) {
+          d3.event.transform.k = 1;
+          return;
+        }
+      xAxis.call(
+        d3.axisBottom(d3.event.transform.rescaleX(xScale)).tickFormat((d, e, target) => {
+          if (Math.floor(d) === d3.format(".1f")(d)) return ordinals[Math.floor(d)]
+            return ordinals[d];
+        })
+      )
+      hideTicksWithoutLabel()
+        bars.attr("transform", "translate(" + d3.event.transform.x+",0)scale(" + d3.event.transform.k + ",1)")
+    }
+  });
+  $("#zoom_chart_25_0").click( function () {
+    window.open("../topo/run_0_hyperion_46399_46399.html");
+  });
+  }
+  if (selector_type.value == "all"
+  &&  selector_run.value  == "1") {
+  $(document).ready(function(){
+    var ordinals = ['hyperion_46399_46399','hyperion_46398_46398','hyperion_46398_46422','hyperion_46399_46423'];
+    var data = [{value: 0.86},{value: 0},{value: 0},{value: 0}];
+    var widthgl  = _width;
+    var widthin  = _width;
+    var heightgl = 400;
+    var heightin = 420;
+    let margin = {
+      top:    10,
+      right:  30,
+      bottom: 20,
+      left:   50
+    },
+    width = widthgl - margin.left - margin.right,
+    height = heightgl - margin.top - margin.bottom,
+    radius = (Math.min(width, height) / 2) - 10,
+    node;
+    const svg = d3.select('#chart_cat_24')
+        .append('svg')
+        .attr('width', widthin)
+        .attr('height', heightin)
+        .append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        .call(
+          d3.zoom()
+            .translateExtent([[0,0], [width, height] ])
+            .extent([[0, 0], [width, height] ])
+          .on('zoom', zoom)
+        ).on("dblclick.zoom", null);
+    let x = d3.scaleLinear().range([0, width])
+    let y = d3.scaleLinear().range([height, 0])
+    let color = d3.scaleOrdinal(d3.schemeCategory10)
+    let xScale = x.domain([-1, ordinals.length])
+    let yScale = y.domain([0, d3.max(data, function(d){return d.value})])
+    let xBand = d3.scaleBand().domain(d3.range(-1, ordinals.length)).range([0, width])
+    svg.append('rect')
+      .attr('class', 'zoom-panel')
+      .attr('width', width)
+      .attr('height', height)
+      .style('fill', 'var(--background)')
+    let xAxis = svg.append('g')
+      .attr('class', 'xAxis')
+      .attr('transform', `translate(0, ${height})`)
+      .call(
+        d3.axisBottom(xScale).tickFormat((d, e) => {
+          return ordinals[d]
+        })
+      );
+    svg.append("text")
+      .attr("transform",
+            "translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("MAQAO thread rank");
+    let yAxis = svg.append('g')
+      .attr('class', 'yAxis')
+      .call(d3.axisLeft(yScale));
+    yAxis.selectAll(".tick text").attr("fill","var(--font)");
+    yAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    yAxis.selectAll(".domain").attr("stroke","var(--font)");
+    xAxis.selectAll(".tick text").attr("fill","var(--font)");
+    xAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    xAxis.selectAll(".domain").attr("stroke","var(--font)");
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("Coverage");
+    let bars = svg.append('g')
+      .attr('clip-path','url(#my-clip-path)')
+      .attr('id', 'zoom_chart_24')
+      .selectAll('.bar')
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('id', function (d, i){ return 'zoom_chart_24_'+i;})
+      .attr('x', function(d, i){
+        return xScale(i) - xBand.bandwidth()*0.9/2
+      })
+      .attr('y', function(d, i){
+        return yScale(d.value)
+      })
+      .attr('width', xBand.bandwidth()*0.9)
+      .attr('height', function(d){
+        return height - yScale(d.value)
+      })
+    let defs = svg.append('defs')
+      defs.append('clipPath')
+        .attr('id', 'my-clip-path')
+        .append('rect')
+        .attr('width', width)
+        .attr('height', height)
+      let hideTicksWithoutLabel = function() {
+        d3.selectAll('.xAxis .tick text').each(function(d){
+          if(this.innerHTML === '') {
+            this.parentNode.style.display = 'none';
+          }
+        })
+      }
+      function zoom() {
+        if (d3.event.transform.k < 1) {
+          d3.event.transform.k = 1;
+          return;
+        }
+      xAxis.call(
+        d3.axisBottom(d3.event.transform.rescaleX(xScale)).tickFormat((d, e, target) => {
+          if (Math.floor(d) === d3.format(".1f")(d)) return ordinals[Math.floor(d)]
+            return ordinals[d];
+        })
+      )
+      hideTicksWithoutLabel()
+        bars.attr("transform", "translate(" + d3.event.transform.x+",0)scale(" + d3.event.transform.k + ",1)")
+    }
+  });
+  $("#zoom_chart_24_0").click( function () {
+    window.open("../topo/run_0_hyperion_46399_46399.html");
+  });
+  $("#zoom_chart_24_1").click( function () {
+    window.open("../topo/run_0_hyperion_46398_46398.html");
+  });
+  $("#zoom_chart_24_2").click( function () {
+    window.open("../topo/run_0_hyperion_46398_46422.html");
+  });
+  $("#zoom_chart_24_3").click( function () {
+    window.open("../topo/run_0_hyperion_46399_46423.html");
+  });
+  }
+  if (selector_type.value == "all"
+  &&  selector_run.value  == "1") {
+  $(document).ready(function(){
+    var ordinals = ['hyperion_46399_46399','hyperion_46398_46398','hyperion_46398_46422','hyperion_46399_46423'];
+    var data = [{value: 0.37},{value: 0},{value: 0},{value: 0}];
+    var widthgl  = _width;
+    var widthin  = _width;
+    var heightgl = 400;
+    var heightin = 420;
+    let margin = {
+      top:    10,
+      right:  30,
+      bottom: 20,
+      left:   50
+    },
+    width = widthgl - margin.left - margin.right,
+    height = heightgl - margin.top - margin.bottom,
+    radius = (Math.min(width, height) / 2) - 10,
+    node;
+    const svg = d3.select('#chart_cat_25')
+        .append('svg')
+        .attr('width', widthin)
+        .attr('height', heightin)
+        .append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        .call(
+          d3.zoom()
+            .translateExtent([[0,0], [width, height] ])
+            .extent([[0, 0], [width, height] ])
+          .on('zoom', zoom)
+        ).on("dblclick.zoom", null);
+    let x = d3.scaleLinear().range([0, width])
+    let y = d3.scaleLinear().range([height, 0])
+    let color = d3.scaleOrdinal(d3.schemeCategory10)
+    let xScale = x.domain([-1, ordinals.length])
+    let yScale = y.domain([0, d3.max(data, function(d){return d.value})])
+    let xBand = d3.scaleBand().domain(d3.range(-1, ordinals.length)).range([0, width])
+    svg.append('rect')
+      .attr('class', 'zoom-panel')
+      .attr('width', width)
+      .attr('height', height)
+      .style('fill', 'var(--background)')
+    let xAxis = svg.append('g')
+      .attr('class', 'xAxis')
+      .attr('transform', `translate(0, ${height})`)
+      .call(
+        d3.axisBottom(xScale).tickFormat((d, e) => {
+          return ordinals[d]
+        })
+      );
+    svg.append("text")
+      .attr("transform",
+            "translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("MAQAO thread rank");
+    let yAxis = svg.append('g')
+      .attr('class', 'yAxis')
+      .call(d3.axisLeft(yScale));
+    yAxis.selectAll(".tick text").attr("fill","var(--font)");
+    yAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    yAxis.selectAll(".domain").attr("stroke","var(--font)");
+    xAxis.selectAll(".tick text").attr("fill","var(--font)");
+    xAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    xAxis.selectAll(".domain").attr("stroke","var(--font)");
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("Time");
+    let bars = svg.append('g')
+      .attr('clip-path','url(#my-clip-path)')
+      .attr('id', 'zoom_chart_25')
+      .selectAll('.bar')
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('id', function (d, i){ return 'zoom_chart_25_'+i;})
+      .attr('x', function(d, i){
+        return xScale(i) - xBand.bandwidth()*0.9/2
+      })
+      .attr('y', function(d, i){
+        return yScale(d.value)
+      })
+      .attr('width', xBand.bandwidth()*0.9)
+      .attr('height', function(d){
+        return height - yScale(d.value)
+      })
+    let defs = svg.append('defs')
+      defs.append('clipPath')
+        .attr('id', 'my-clip-path')
+        .append('rect')
+        .attr('width', width)
+        .attr('height', height)
+      let hideTicksWithoutLabel = function() {
+        d3.selectAll('.xAxis .tick text').each(function(d){
+          if(this.innerHTML === '') {
+            this.parentNode.style.display = 'none';
+          }
+        })
+      }
+      function zoom() {
+        if (d3.event.transform.k < 1) {
+          d3.event.transform.k = 1;
+          return;
+        }
+      xAxis.call(
+        d3.axisBottom(d3.event.transform.rescaleX(xScale)).tickFormat((d, e, target) => {
+          if (Math.floor(d) === d3.format(".1f")(d)) return ordinals[Math.floor(d)]
+            return ordinals[d];
+        })
+      )
+      hideTicksWithoutLabel()
+        bars.attr("transform", "translate(" + d3.event.transform.x+",0)scale(" + d3.event.transform.k + ",1)")
+    }
+  });
+  $("#zoom_chart_25_0").click( function () {
+    window.open("../topo/run_0_hyperion_46399_46399.html");
+  });
+  $("#zoom_chart_25_1").click( function () {
+    window.open("../topo/run_0_hyperion_46398_46398.html");
+  });
+  $("#zoom_chart_25_2").click( function () {
+    window.open("../topo/run_0_hyperion_46398_46422.html");
+  });
+  $("#zoom_chart_25_3").click( function () {
+    window.open("../topo/run_0_hyperion_46399_46423.html");
+  });
+  }
+}
+function ldbal_onresize (panelId) {
+  document.getElementById ("ldbal_select_run").value = document.getElementById ("main_section_div").dataset.run;
+  document.getElementById ("ldbal_select_type").value = document.getElementById ("main_section_div").dataset.ldbal;
+  set_ldbal_input ();
+}
+function ldbal_loadhelp (divId) {
+  var e = document.getElementById (divId);
+  if (e != null) {
+    e.setAttribute ("title", "Load distribution analysis of the loop.<br/>It is generated using LPROF results.");
+  }
+}
+  </script>
+</div>
+<div class="panelcontent" id="OV_panel_cqa_adv">
+  <div id="path_selection_adv" style="padding-bottom:15px;" >
+    <table style="width:100%;text-align:center;">
+      <tr>
+        <td>
+          <button type="button" class="tooltip-maqao-button" title="Show previous path" onclick="set_previous_path ();">&#8592;</button>
+        </td>
+        <td style="border-bottom: 1px solid var(--fixed_box_borders);">Path <input id="path_selection_adv_input" type="number" min="0" max="1" value="0" style="width:35px;"> / <span id="path_selection_adv_input_max"></span><button type="button" class="tooltip-maqao-button" title="Show selected path" style="margin-left: 10px;" onclick="set_path_input ('path_selection_adv_input')" >OK</button></td>
+        <td><button type="button" class="tooltip-maqao-button" title="Show next path" onclick="set_next_path ();">&#8594;</button></td>
+      </tr>
+    </table>
+  </div>
+  <div id="loop_static">
+    <div id="loop_static_path_0" style="width:100%;">
+      <table style="width:100%;">
+        <tr><th>Metric</th><th>Value</th></tr>
+            <tr><td>Coverage (% app. time)</td><td>0.22</td></tr>
+            <tr><td>Time (s)</td><td>0.37</td></tr>
+            <tr><td>[VPROF] Instance Count</td><td></td></tr>
+            <tr><td>[VPROF] Iteration Count (min | avg | max)</td><td></td></tr>
+            <tr><td>[VPROF] Cycles per Iteration (min | avg | max)</td><td></td></tr>
+            <tr><td>CQA speedup if no scalar integer</td><td>1.00</td></tr>
+            <tr><td>CQA speedup if FP arith vectorized</td><td style="background-color:#FF950E;">3.05</td></tr>
+            <tr><td>CQA speedup if fully vectorized</td><td style="background-color:#FF950E;">4.00</td></tr>
+            <tr><td>CQA speedup if no inter-iteration dependency</td><td>NA</td></tr>
+            <tr><td>CQA speedup if next bottleneck killed</td><td style="background-color:#FFCC99;">1.14 - 1.12</td></tr>
+            <tr><td>Speedup if perfectly load balanced</td><td>1</td></tr>
+            <tr><td>Bottlenecks</td><td></td></tr>
+            <tr><td>Function</td><td>save_frame</td></tr>
+            <tr><td>Source</td><td></td></tr>
+            <tr><td>Source loop unroll info</td><td>NA</td></tr>
+            <tr><td>Source loop unroll confidence level</td><td>NA</td></tr>
+            <tr><td>Unroll/vectorization loop type</td><td>NA</td></tr>
+            <tr><td>Unroll factor</td><td>NA</td></tr>
+            <tr><td>CQA cycles</td><td>12.50 - 14.00</td></tr>
+            <tr><td>CQA cycles if no scalar integer</td><td>12.50 - 14.00</td></tr>
+            <tr><td>CQA cycles if FP arith vectorized</td><td>4.59</td></tr>
+            <tr><td>CQA cycles if fully vectorized</td><td>3.13 - 3.50</td></tr>
+            <tr><td>Front-end cycles</td><td>11.00</td></tr>
+            <tr><td>P0 cycles</td><td>12.50</td></tr>
+            <tr><td>P1 cycles</td><td>12.50</td></tr>
+            <tr><td>P2 cycles</td><td>5.25</td></tr>
+            <tr><td>P3 cycles</td><td>5.25</td></tr>
+            <tr><td>P4 cycles</td><td>0.75</td></tr>
+            <tr><td>P5 cycles</td><td>7.75</td></tr>
+            <tr><td>P6 cycles</td><td>7.75</td></tr>
+            <tr><td>P7 cycles</td><td>0.75</td></tr>
+            <tr><td>P8 cycles</td><td>0.75</td></tr>
+            <tr><td>P9 cycles</td><td>0.75</td></tr>
+            <tr><td>DIV/SQRT cycles</td><td style="background-color:#FFCC99;">12.50 - 14.00</td></tr>
+            <tr><td>Inter-iter dependencies cycles</td><td>1</td></tr>
+            <tr><td>Nb insns</td><td>54.00</td></tr>
+            <tr><td>Nb uops</td><td>55.00</td></tr>
+            <tr><td>Nb loads</td><td>10.50</td></tr>
+            <tr><td>Nb stores</td><td>1.00</td></tr>
+            <tr><td>Nb stack references</td><td style="background-color:#66cc00;">0.00</td></tr>
+            <tr><td>FLOP/cycle</td><td>1.92 - 1.71</td></tr>
+            <tr><td>Nb FLOP add-sub</td><td>18.00</td></tr>
+            <tr><td>Nb FLOP mul</td><td>1.00</td></tr>
+            <tr><td>Nb FLOP fma</td><td>1.00</td></tr>
+            <tr><td>Nb FLOP div</td><td>2.00</td></tr>
+            <tr><td>Nb FLOP rcp</td><td>0.00</td></tr>
+            <tr><td>Nb FLOP sqrt</td><td>1.00</td></tr>
+            <tr><td>Nb FLOP rsqrt</td><td>0.00</td></tr>
+            <tr><td>Bytes/cycle</td><td>6.43 - 7.20</td></tr>
+            <tr><td>Bytes prefetched</td><td>0.00</td></tr>
+            <tr><td>Bytes loaded</td><td>82.00</td></tr>
+            <tr><td>Bytes stored</td><td>8.00</td></tr>
+            <tr><td>Stride 0</td><td>1.00</td></tr>
+            <tr><td>Stride 1</td><td>1.00</td></tr>
+            <tr><td>Stride n</td><td>0.00</td></tr>
+            <tr><td>Stride unknown</td><td>1.00</td></tr>
+            <tr><td>Stride indirect</td><td>0.00</td></tr>
+            <tr><td>Vectorization ratio all</td><td style="background-color:#FF3333;">5.33</td></tr>
+            <tr><td>Vectorization ratio load</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio store</td><td style="background-color:#66cc00;">100.00</td></tr>
+            <tr><td>Vectorization ratio mul</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio add_sub</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio fma</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio div_sqrt</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio other</td><td style="background-color:#FF3333;">20.00</td></tr>
+            <tr><td>Vector-efficiency ratio all</td><td>12.75</td></tr>
+            <tr><td>Vector-efficiency ratio load</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio store</td><td style="background-color:#FF3333;">12.50</td></tr>
+            <tr><td>Vector-efficiency ratio mul</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio add_sub</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio fma</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio div_sqrt</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio other</td><td>14.38</td></tr>
+      </table>
+    </div>
+    <div id="loop_static_path_1" style="width:100%;">
+      <table style="width:100%;">
+        <tr><th>Metric</th><th>Value</th></tr>
+            <tr><td>Coverage (% app. time)</td><td>0.22</td></tr>
+            <tr><td>Time (s)</td><td>0.37</td></tr>
+            <tr><td>[VPROF] Instance Count</td><td></td></tr>
+            <tr><td>[VPROF] Iteration Count (min | avg | max)</td><td></td></tr>
+            <tr><td>[VPROF] Cycles per Iteration (min | avg | max)</td><td></td></tr>
+            <tr><td>CQA speedup if no scalar integer</td><td>1.00</td></tr>
+            <tr><td>CQA speedup if FP arith vectorized</td><td style="background-color:#FF950E;">3.03</td></tr>
+            <tr><td>CQA speedup if fully vectorized</td><td style="background-color:#FF950E;">4.00</td></tr>
+            <tr><td>CQA speedup if no inter-iteration dependency</td><td>NA</td></tr>
+            <tr><td>CQA speedup if next bottleneck killed</td><td style="background-color:#FFCC99;">1.06 - 1.12</td></tr>
+            <tr><td>Speedup if perfectly load balanced</td><td>1</td></tr>
+            <tr><td>Bottlenecks</td><td>P0, </td></tr>
+            <tr><td>Function</td><td>save_frame</td></tr>
+            <tr><td>Source</td><td></td></tr>
+            <tr><td>Source loop unroll info</td><td>NA</td></tr>
+            <tr><td>Source loop unroll confidence level</td><td>NA</td></tr>
+            <tr><td>Unroll/vectorization loop type</td><td>NA</td></tr>
+            <tr><td>Unroll factor</td><td>NA</td></tr>
+            <tr><td>CQA cycles</td><td>12.50 - 14.00</td></tr>
+            <tr><td>CQA cycles if no scalar integer</td><td>12.50 - 14.00</td></tr>
+            <tr><td>CQA cycles if FP arith vectorized</td><td>4.63</td></tr>
+            <tr><td>CQA cycles if fully vectorized</td><td>3.13 - 3.50</td></tr>
+            <tr><td>Front-end cycles</td><td>11.80</td></tr>
+            <tr><td>P0 cycles</td><td>12.50</td></tr>
+            <tr><td>P1 cycles</td><td>12.50</td></tr>
+            <tr><td>P2 cycles</td><td>5.50</td></tr>
+            <tr><td>P3 cycles</td><td>5.50</td></tr>
+            <tr><td>P4 cycles</td><td>1.00</td></tr>
+            <tr><td>P5 cycles</td><td>8.50</td></tr>
+            <tr><td>P6 cycles</td><td>8.50</td></tr>
+            <tr><td>P7 cycles</td><td>1.00</td></tr>
+            <tr><td>P8 cycles</td><td>1.00</td></tr>
+            <tr><td>P9 cycles</td><td>1.00</td></tr>
+            <tr><td>DIV/SQRT cycles</td><td style="background-color:#FFCC99;">12.50 - 14.00</td></tr>
+            <tr><td>Inter-iter dependencies cycles</td><td>1</td></tr>
+            <tr><td>Nb insns</td><td>58.00</td></tr>
+            <tr><td>Nb uops</td><td>59.00</td></tr>
+            <tr><td>Nb loads</td><td>11.00</td></tr>
+            <tr><td>Nb stores</td><td>1.00</td></tr>
+            <tr><td>Nb stack references</td><td style="background-color:#66cc00;">0.00</td></tr>
+            <tr><td>FLOP/cycle</td><td>1.92 - 1.71</td></tr>
+            <tr><td>Nb FLOP add-sub</td><td>18.00</td></tr>
+            <tr><td>Nb FLOP mul</td><td>1.00</td></tr>
+            <tr><td>Nb FLOP fma</td><td>1.00</td></tr>
+            <tr><td>Nb FLOP div</td><td>2.00</td></tr>
+            <tr><td>Nb FLOP rcp</td><td>0.00</td></tr>
+            <tr><td>Nb FLOP sqrt</td><td>1.00</td></tr>
+            <tr><td>Nb FLOP rsqrt</td><td>0.00</td></tr>
+            <tr><td>Bytes/cycle</td><td>6.57 - 7.36</td></tr>
+            <tr><td>Bytes prefetched</td><td>0.00</td></tr>
+            <tr><td>Bytes loaded</td><td>84.00</td></tr>
+            <tr><td>Bytes stored</td><td>8.00</td></tr>
+            <tr><td>Stride 0</td><td>1.00</td></tr>
+            <tr><td>Stride 1</td><td>1.00</td></tr>
+            <tr><td>Stride n</td><td>0.00</td></tr>
+            <tr><td>Stride unknown</td><td>1.00</td></tr>
+            <tr><td>Stride indirect</td><td>0.00</td></tr>
+            <tr><td>Vectorization ratio all</td><td style="background-color:#FF3333;">5.41</td></tr>
+            <tr><td>Vectorization ratio load</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio store</td><td style="background-color:#66cc00;">100.00</td></tr>
+            <tr><td>Vectorization ratio mul</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio add_sub</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio fma</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio div_sqrt</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio other</td><td style="background-color:#FF3333;">20.00</td></tr>
+            <tr><td>Vector-efficiency ratio all</td><td>12.84</td></tr>
+            <tr><td>Vector-efficiency ratio load</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio store</td><td style="background-color:#FF3333;">12.50</td></tr>
+            <tr><td>Vector-efficiency ratio mul</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio add_sub</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio fma</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio div_sqrt</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio other</td><td>15.00</td></tr>
+      </table>
+    </div>
+    <div id="loop_static_path_2" style="width:100%;">
+      <table style="width:100%;">
+        <tr><th>Metric</th><th>Value</th></tr>
+            <tr><td>Coverage (% app. time)</td><td>0.22</td></tr>
+            <tr><td>Time (s)</td><td>0.37</td></tr>
+            <tr><td>[VPROF] Instance Count</td><td></td></tr>
+            <tr><td>[VPROF] Iteration Count (min | avg | max)</td><td></td></tr>
+            <tr><td>[VPROF] Cycles per Iteration (min | avg | max)</td><td></td></tr>
+            <tr><td>CQA speedup if no scalar integer</td><td>1.00</td></tr>
+            <tr><td>CQA speedup if FP arith vectorized</td><td style="background-color:#FF950E;">3.07</td></tr>
+            <tr><td>CQA speedup if fully vectorized</td><td style="background-color:#FF950E;">4.00</td></tr>
+            <tr><td>CQA speedup if no inter-iteration dependency</td><td>NA</td></tr>
+            <tr><td>CQA speedup if next bottleneck killed</td><td style="background-color:#FFCC99;">1.23 - 1.12</td></tr>
+            <tr><td>Speedup if perfectly load balanced</td><td>1</td></tr>
+            <tr><td>Bottlenecks</td><td>P0, </td></tr>
+            <tr><td>Function</td><td>save_frame</td></tr>
+            <tr><td>Source</td><td></td></tr>
+            <tr><td>Source loop unroll info</td><td>NA</td></tr>
+            <tr><td>Source loop unroll confidence level</td><td>NA</td></tr>
+            <tr><td>Unroll/vectorization loop type</td><td>NA</td></tr>
+            <tr><td>Unroll factor</td><td>NA</td></tr>
+            <tr><td>CQA cycles</td><td>12.50 - 14.00</td></tr>
+            <tr><td>CQA cycles if no scalar integer</td><td>12.50 - 14.00</td></tr>
+            <tr><td>CQA cycles if FP arith vectorized</td><td>4.56</td></tr>
+            <tr><td>CQA cycles if fully vectorized</td><td>3.13 - 3.50</td></tr>
+            <tr><td>Front-end cycles</td><td>10.20</td></tr>
+            <tr><td>P0 cycles</td><td>12.50</td></tr>
+            <tr><td>P1 cycles</td><td>12.50</td></tr>
+            <tr><td>P2 cycles</td><td>5.00</td></tr>
+            <tr><td>P3 cycles</td><td>5.00</td></tr>
+            <tr><td>P4 cycles</td><td>0.50</td></tr>
+            <tr><td>P5 cycles</td><td>7.00</td></tr>
+            <tr><td>P6 cycles</td><td>7.00</td></tr>
+            <tr><td>P7 cycles</td><td>0.50</td></tr>
+            <tr><td>P8 cycles</td><td>0.50</td></tr>
+            <tr><td>P9 cycles</td><td>0.50</td></tr>
+            <tr><td>DIV/SQRT cycles</td><td style="background-color:#FFCC99;">12.50 - 14.00</td></tr>
+            <tr><td>Inter-iter dependencies cycles</td><td>1</td></tr>
+            <tr><td>Nb insns</td><td>50.00</td></tr>
+            <tr><td>Nb uops</td><td>51.00</td></tr>
+            <tr><td>Nb loads</td><td>10.00</td></tr>
+            <tr><td>Nb stores</td><td>1.00</td></tr>
+            <tr><td>Nb stack references</td><td style="background-color:#66cc00;">0.00</td></tr>
+            <tr><td>FLOP/cycle</td><td>1.92 - 1.71</td></tr>
+            <tr><td>Nb FLOP add-sub</td><td>18.00</td></tr>
+            <tr><td>Nb FLOP mul</td><td>1.00</td></tr>
+            <tr><td>Nb FLOP fma</td><td>1.00</td></tr>
+            <tr><td>Nb FLOP div</td><td>2.00</td></tr>
+            <tr><td>Nb FLOP rcp</td><td>0.00</td></tr>
+            <tr><td>Nb FLOP sqrt</td><td>1.00</td></tr>
+            <tr><td>Nb FLOP rsqrt</td><td>0.00</td></tr>
+            <tr><td>Bytes/cycle</td><td>6.29 - 7.04</td></tr>
+            <tr><td>Bytes prefetched</td><td>0.00</td></tr>
+            <tr><td>Bytes loaded</td><td>80.00</td></tr>
+            <tr><td>Bytes stored</td><td>8.00</td></tr>
+            <tr><td>Stride 0</td><td>1.00</td></tr>
+            <tr><td>Stride 1</td><td>1.00</td></tr>
+            <tr><td>Stride n</td><td>0.00</td></tr>
+            <tr><td>Stride unknown</td><td>1.00</td></tr>
+            <tr><td>Stride indirect</td><td>0.00</td></tr>
+            <tr><td>Vectorization ratio all</td><td style="background-color:#FF3333;">5.26</td></tr>
+            <tr><td>Vectorization ratio load</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio store</td><td style="background-color:#66cc00;">100.00</td></tr>
+            <tr><td>Vectorization ratio mul</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio add_sub</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio fma</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio div_sqrt</td><td style="background-color:#FF3333;">0.00</td></tr>
+            <tr><td>Vectorization ratio other</td><td style="background-color:#FF3333;">20.00</td></tr>
+            <tr><td>Vector-efficiency ratio all</td><td>12.66</td></tr>
+            <tr><td>Vector-efficiency ratio load</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio store</td><td style="background-color:#FF3333;">12.50</td></tr>
+            <tr><td>Vector-efficiency ratio mul</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio add_sub</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio fma</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio div_sqrt</td><td>12.50</td></tr>
+            <tr><td>Vector-efficiency ratio other</td><td>13.75</td></tr>
+      </table>
+    </div>
+  </div>
+  <script>
+function cqa_adv_onresize ()
+{
+  var cur_path = parseInt (document.getElementById ("main_section_div").dataset.path);
+  var max_path = parseInt (document.getElementById ("main_section_div").dataset.maxpath);
+  document.getElementById ("path_selection_adv_input").max = max_path;
+  document.getElementById ("path_selection_adv_input_max").innerHTML = max_path;
+  _set_path (cur_path, max_path)
+}
+function cqa_adv_loadhelp (divId) {
+  var e = document.getElementById (divId);
+  if (e != null) {
+    e.setAttribute ("title", "Summary of several CQA metrics for an advanced usage.");
+  }
+}
+  </script>
+</div>
+<div class="panelcontent" id="OV_panel_cqa">
+  <div id="path_selection" style="padding-bottom:15px;" >
+    <table style="width:100%;text-align:center;">
+      <tr>
+        <td>
+          <button type="button" class="tooltip-maqao-button" title="Show previous path" onclick="set_previous_path ();">&#8592;</button>
+        </td>
+        <td style="border-bottom: 1px solid var(--fixed_box_borders);">Path <input id="path_selection_input" type="number" min="0" max="1" value="0" style="width:35px;"> / <span id="path_selection_input_max"></span><button type="button" class="tooltip-maqao-button" title="Show selected path" style="margin-left: 10px;" onclick="set_path_input ('path_selection_input')" >OK</button></td>
+        <td><button type="button" class="tooltip-maqao-button" title="Show next path" onclick="set_next_path ();">&#8594;</button></td>
+      </tr>
+    </table>
+  </div>
+  <div id="loop_cqa">
+    <div id="loop_cqa_path_0">
+      <div style="padding-left:10px;margin-bottom: 10px;">
+<strong>Average path</strong>: Display a virtual path defined by average values of all real paths
+      </div>
+      <div style="padding-left:10px;margin-bottom: 10px;">
+        <table>
+          <tr><td class="_td_shift_20">Coverage</td><td>0.22 %</td></tr>
+          <tr><td class="_td_shift_20">Function</td><td><a href="../functions/lbm_12.html">save_frame</a></td></tr>
+          <tr><td class="_td_shift_20">Source file and lines</td><td></td></tr>
+        <tr><td class="_td_shift_20">Module</td><td>lbm</td></tr>
+        </table>
+<br />The structure of this loop is probably &lt;if then [else] end&gt;.<br /><br />The presence of multiple execution paths is typically the main/first bottleneck.<br />Try to simplify control inside loop: ideally, try to remove all conditional expressions, for example by (if applicable):<br /><ul><li>hoisting them (moving them outside the loop)</li><li>turning them into conditional moves, MIN or MAX</li></ul><br /><br />      </div><div class="_tab_box">
+  <div class="_tab_header">
+    <ul>
+      <li class="_tab_header_li selected_tab" data-tab="tab7-1" onclick="change_tab (this, 'tab7-')">gain</li>
+      <li class="_tab_header_li " data-tab="tab7-2" onclick="change_tab (this, 'tab7-')">potential</li>
+      <li class="_tab_header_li " data-tab="tab7-3" onclick="change_tab (this, 'tab7-')">hint</li>
+      <li class="_tab_header_li " data-tab="tab7-4" onclick="change_tab (this, 'tab7-')">expert</li>
+    </ul>
+  </div>
+  <div class="_tab_content">
+  <div id="tab7-1">
+<div class="_fixed_box" ><h3 class="_header">Vectorization</h3>
+<div class="_content">Your loop is not vectorized.
+Only 12% of vector register length is used (average across all SSE/AVX instructions).
+By fully vectorizing your loop, you can lower the cost of an iteration from 14.00 to 3.50 cycles (4.00x speedup).
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content">5% of SSE/AVX instructions are used in vector version (process two or more data elements in vector registers):
+<ul><li>0% of SSE/AVX loads are used in vector version.</li><li>0% of SSE/AVX addition or subtraction instructions are used in vector version.</li><li>0% of SSE/AVX multiply instructions are used in vector version.</li><li>0% of SSE/AVX fused multiply-add instructions are used in vector version.</li><li>0% of SSE/AVX nil are used in vector version.</li><li>20% of SSE/AVX instructions that are not load, store, addition, subtraction nor multiply instructions are used in vector version.</li></ul>Since your execution units are vector units, only a fully vectorized loop can use their full power.
+
+</div></div><div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content"><ul><li>Try another compiler or update/tune your current one</li><li>Remove inter-iterations dependences from your loop and make it unit-stride:
+<ul><li>If your arrays have 2 or more dimensions, check whether elements are accessed contiguously and, otherwise, try to permute loops accordingly</li><li>If your loop streams arrays of structures (AoS), try to use structures of arrays instead (SoA)</li></ul></li></ul>
+</div></div></div></div></div>
+  <div id="tab7-2">
+<div class="_fixed_box" ><h3 class="_header">FMA</h3>
+<div class="_content">Detected 1 FMA (fused multiply-add) operations.
+Presence of both ADD/SUB and MUL operations.
+<div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content">Try to change order in which elements are evaluated (using parentheses) in arithmetic expressions containing both ADD/SUB and MUL operations to enable your compiler to generate FMA instructions wherever possible.
+For instance a + b*c is a valid FMA (MUL then ADD).
+However (a+b)* c cannot be translated into an FMA (ADD then MUL).
+</div></div></div></div></div>
+  <div id="tab7-3">
+<div class="_fixed_box" ><h3 class="_header">CALL instructions</h3>
+<div class="_content">Detected function call instructions.
+
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content">Calling (and then returning from) a function prevents many compiler optimizations (like vectorization), breaks control flow (which reduces pipeline performance) and executes extra instructions to save/restore the registers used inside it, which is very expensive (dozens of cycles). Consider to inline small functions.
+<ul><li>fwrite@plt: 1 occurrences</li></ul>
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Complex instructions</h3>
+<div class="_content">Detected COMPLEX INSTRUCTIONS.
+
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content">These instructions generate more than one micro-operation and only one of them can be decoded during a cycle and the extra micro-operations increase pressure on execution units.
+<ul><li>VCVTPD2PS: 1 occurrences</li></ul>
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Conversion instructions</h3>
+<div class="_content">Detected expensive conversion instructions.
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content"><ul><li>VCVTPD2PS (FP64 to FP32, SIMD): 1 occurrences</li></ul>
+</div></div><div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content">Avoid mixing data with different types. In particular, check if the type of constants is the same as array elements. Use double instead of single precision only when/where needed by numerical stability and avoid mixing precision.
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Type of elements and instruction set</h3>
+<div class="_content">23 SSE or AVX instructions are processing arithmetic or math operations on double precision FP elements in scalar mode (one at a time).
+
+</div></div><div class="_fixed_box" ><h3 class="_header">Matching between your loop (in the source code) and the binary loop</h3>
+<div class="_content">The binary loop is composed of 24 FP arithmetical operations:
+<ul><li>19: addition or subtraction (1 inside FMA instructions)</li><li>2: multiply (1 inside FMA instructions)</li><li>2: divide</li><li>1: square root</li></ul>The binary loop is loading 82 bytes (10 double precision FP elements).
+The binary loop is storing 8 bytes (1 double precision FP elements).
+</div></div><div class="_fixed_box" ><h3 class="_header">Arithmetic intensity</h3>
+<div class="_content">Arithmetic intensity is 0.27 FP operations per loaded or stored byte.
+</div></div></div>
+  <div id="tab7-4">
+<div class="_fixed_box" ><h3 class="_header">General properties</h3>
+<div class="_content"><table><tr><td>nb instructions</td><td>54</td></tr><tr><td>nb uops</td><td>55</td></tr><tr><td>loop length</td><td>249.50</td></tr><tr><td>used x86 registers</td><td>12.50</td></tr><tr><td>used mmx registers</td><td>0</td></tr><tr><td>used xmm registers</td><td>16</td></tr><tr><td>used ymm registers</td><td>0</td></tr><tr><td>used zmm registers</td><td>0</td></tr><tr><td>nb stack references</td><td>0</td></tr><tr><td>ADD-SUB / MUL ratio</td><td>18.00</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Front-end</h3>
+<div class="_content">MACRO FUSION NOT POSSIBLE
+<table><tr><td>micro-operation queue</td><td>11.00 cycles</td></tr><tr><td>front end</td><td>11.00 cycles</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Back-end</h3>
+<div class="_content"><table><tr><th>      </th><th>P0</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th><th>P7</th><th>P8</th><th>P9</th></tr><tr><td>uops</td><td>12.50</td><td>12.50</td><td>5.25</td><td>5.25</td><td>0.75</td><td>7.75</td><td>7.75</td><td>0.75</td><td>0.75</td><td>0.75</td></tr><tr><td>cycles</td><td>12.50</td><td>12.50</td><td>5.25</td><td>5.25</td><td>0.75</td><td>7.75</td><td>7.75</td><td>0.75</td><td>0.75</td><td>0.75</td></tr></table>
+<table><tr><td>Cycles executing div or sqrt instructions</td><td>12.50-14.00</td></tr><tr><td>Longest recurrence chain latency (RecMII)</td><td>1.00</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Cycles summary</h3>
+<div class="_content"><table><tr><td>Front-end</td><td>11.00</td></tr><tr><td>Dispatch</td><td>12.50</td></tr><tr><td>DIV/SQRT</td><td>12.50-14.00</td></tr><tr><td>Data deps.</td><td>1.00</td></tr><tr><td>Overall L1</td><td>12.50-14.00</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Vectorization ratios</h3>
+<div class="_content">INT
+<table><tr><td>all</td><td>0%</td></tr><tr><td>load</td><td>NA (no load vectorizable/vectorized instructions)</td></tr><tr><td>store</td><td>NA (no store vectorizable/vectorized instructions)</td></tr><tr><td>mul</td><td>NA (no mul vectorizable/vectorized instructions)</td></tr><tr><td>add-sub</td><td>0%</td></tr><tr><td>fma</td><td>NA (no fma vectorizable/vectorized instructions)</td></tr><tr><td>other</td><td>0%</td></tr></table>FP
+<table><tr><td>all</td><td>5%</td></tr><tr><td>load</td><td>0%</td></tr><tr><td>store</td><td>100%</td></tr><tr><td>mul</td><td>0%</td></tr><tr><td>add-sub</td><td>0%</td></tr><tr><td>fma</td><td>0%</td></tr><tr><td>div/sqrt</td><td>0%</td></tr><tr><td>other</td><td>50%</td></tr></table>INT+FP
+<table><tr><td>all</td><td>5%</td></tr><tr><td>load</td><td>0%</td></tr><tr><td>store</td><td>100%</td></tr><tr><td>mul</td><td>0%</td></tr><tr><td>add-sub</td><td>0%</td></tr><tr><td>fma</td><td>0%</td></tr><tr><td>div/sqrt</td><td>0%</td></tr><tr><td>other</td><td>20%</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Vector efficiency ratios</h3>
+<div class="_content">INT
+<table><tr><td>all</td><td>11%</td></tr><tr><td>load</td><td>NA (no load vectorizable/vectorized instructions)</td></tr><tr><td>store</td><td>NA (no store vectorizable/vectorized instructions)</td></tr><tr><td>mul</td><td>NA (no mul vectorizable/vectorized instructions)</td></tr><tr><td>add-sub</td><td>12%</td></tr><tr><td>fma</td><td>NA (no fma vectorizable/vectorized instructions)</td></tr><tr><td>other</td><td>11%</td></tr></table>FP
+<table><tr><td>all</td><td>12%</td></tr><tr><td>load</td><td>12%</td></tr><tr><td>store</td><td>12%</td></tr><tr><td>mul</td><td>12%</td></tr><tr><td>add-sub</td><td>12%</td></tr><tr><td>fma</td><td>12%</td></tr><tr><td>div/sqrt</td><td>12%</td></tr><tr><td>other</td><td>18%</td></tr></table>INT+FP
+<table><tr><td>all</td><td>12%</td></tr><tr><td>load</td><td>12%</td></tr><tr><td>store</td><td>12%</td></tr><tr><td>mul</td><td>12%</td></tr><tr><td>add-sub</td><td>12%</td></tr><tr><td>fma</td><td>12%</td></tr><tr><td>div/sqrt</td><td>12%</td></tr><tr><td>other</td><td>14%</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Cycles and memory resources usage</h3>
+<div class="_content">Assuming all data fit into the L1 cache, each iteration of the binary loop takes 14.00 cycles. At this rate:
+<ul><li>4% of peak load performance is reached (5.86 out of 128.00 bytes loaded per cycle (GB/s @ 1GHz))</li><li>0% of peak store performance is reached (0.57 out of 64.00 bytes stored per cycle (GB/s @ 1GHz))</li></ul>
+</div></div></div>
+</div></div>
+    </div>
+    <div id="loop_cqa_path_1">
+      <div style="padding-left:10px;margin-bottom: 10px;">
+        <table>
+          <tr><td class="_td_shift_20">Coverage</td><td>0.22 %</td></tr>
+          <tr><td class="_td_shift_20">Function</td><td><a href="../functions/lbm_12.html">save_frame</a></td></tr>
+          <tr><td class="_td_shift_20">Source file and lines</td><td></td></tr>
+        <tr><td class="_td_shift_20">Module</td><td>lbm</td></tr>
+        </table>
+<br />The structure of this loop is probably &lt;if then [else] end&gt;.<br /><br />The presence of multiple execution paths is typically the main/first bottleneck.<br />Try to simplify control inside loop: ideally, try to remove all conditional expressions, for example by (if applicable):<br /><ul><li>hoisting them (moving them outside the loop)</li><li>turning them into conditional moves, MIN or MAX</li></ul><br /><br />      </div><div class="_tab_box">
+  <div class="_tab_header">
+    <ul>
+      <li class="_tab_header_li selected_tab" data-tab="tab8-1" onclick="change_tab (this, 'tab8-')">gain</li>
+      <li class="_tab_header_li " data-tab="tab8-2" onclick="change_tab (this, 'tab8-')">potential</li>
+      <li class="_tab_header_li " data-tab="tab8-3" onclick="change_tab (this, 'tab8-')">hint</li>
+      <li class="_tab_header_li " data-tab="tab8-4" onclick="change_tab (this, 'tab8-')">expert</li>
+    </ul>
+  </div>
+  <div class="_tab_content">
+  <div id="tab8-1">
+<div class="_fixed_box" ><h3 class="_header">Vectorization</h3>
+<div class="_content">Your loop is not vectorized.
+Only 12% of vector register length is used (average across all SSE/AVX instructions).
+By fully vectorizing your loop, you can lower the cost of an iteration from 14.00 to 3.50 cycles (4.00x speedup).
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content">5% of SSE/AVX instructions are used in vector version (process two or more data elements in vector registers):
+<ul><li>0% of SSE/AVX loads are used in vector version.</li><li>0% of SSE/AVX addition or subtraction instructions are used in vector version.</li><li>0% of SSE/AVX multiply instructions are used in vector version.</li><li>0% of SSE/AVX fused multiply-add instructions are used in vector version.</li><li>0% of SSE/AVX nil are used in vector version.</li><li>20% of SSE/AVX instructions that are not load, store, addition, subtraction nor multiply instructions are used in vector version.</li></ul>Since your execution units are vector units, only a fully vectorized loop can use their full power.
+
+</div></div><div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content"><ul><li>Try another compiler or update/tune your current one</li><li>Remove inter-iterations dependences from your loop and make it unit-stride:
+<ul><li>If your arrays have 2 or more dimensions, check whether elements are accessed contiguously and, otherwise, try to permute loops accordingly</li><li>If your loop streams arrays of structures (AoS), try to use structures of arrays instead (SoA)</li></ul></li></ul>
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Execution units bottlenecks</h3>
+<div class="_content">Performance is limited by execution of divide and square root operations (the divide/square root unit is a bottleneck).
+
+By removing all these bottlenecks, you can lower the cost of an iteration from 14.00 to 12.50 cycles (1.12x speedup).
+
+<div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content"><ul><li>Reduce the number of division or square root instructions:
+<ul><li>If denominator is constant over iterations, use reciprocal (replace x/y with x*(1/y)). Check precision impact.</li></ul></li><li>Check whether you really need double precision. If not, switch to single precision to speedup execution</li></ul>
+</div></div></div></div></div>
+  <div id="tab8-2">
+<div class="_fixed_box" ><h3 class="_header">FMA</h3>
+<div class="_content">Detected 1 FMA (fused multiply-add) operations.
+Presence of both ADD/SUB and MUL operations.
+<div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content">Try to change order in which elements are evaluated (using parentheses) in arithmetic expressions containing both ADD/SUB and MUL operations to enable your compiler to generate FMA instructions wherever possible.
+For instance a + b*c is a valid FMA (MUL then ADD).
+However (a+b)* c cannot be translated into an FMA (ADD then MUL).
+</div></div></div></div></div>
+  <div id="tab8-3">
+<div class="_fixed_box" ><h3 class="_header">CALL instructions</h3>
+<div class="_content">Detected function call instructions.
+
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content">Calling (and then returning from) a function prevents many compiler optimizations (like vectorization), breaks control flow (which reduces pipeline performance) and executes extra instructions to save/restore the registers used inside it, which is very expensive (dozens of cycles). Consider to inline small functions.
+<ul><li>fwrite@plt: 1 occurrences</li></ul>
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Complex instructions</h3>
+<div class="_content">Detected COMPLEX INSTRUCTIONS.
+
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content">These instructions generate more than one micro-operation and only one of them can be decoded during a cycle and the extra micro-operations increase pressure on execution units.
+<ul><li>VCVTPD2PS: 1 occurrences</li></ul>
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Slow data structures access</h3>
+<div class="_content">Detected data structures (typically arrays) that cannot be efficiently read/written
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content"><ul><li>Constant unknown stride: 1 occurrence(s)</li></ul>Non-unit stride (uncontiguous) accesses are not efficiently using data caches
+
+</div></div><div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content"><ul><li>Try to reorganize arrays of structures to structures of arrays</li><li>Consider to permute loops (see vectorization gain report)</li></ul>
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Conversion instructions</h3>
+<div class="_content">Detected expensive conversion instructions.
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content"><ul><li>VCVTPD2PS (FP64 to FP32, SIMD): 1 occurrences</li></ul>
+</div></div><div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content">Avoid mixing data with different types. In particular, check if the type of constants is the same as array elements. Use double instead of single precision only when/where needed by numerical stability and avoid mixing precision.
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Type of elements and instruction set</h3>
+<div class="_content">23 SSE or AVX instructions are processing arithmetic or math operations on double precision FP elements in scalar mode (one at a time).
+
+</div></div><div class="_fixed_box" ><h3 class="_header">Matching between your loop (in the source code) and the binary loop</h3>
+<div class="_content">The binary loop is composed of 24 FP arithmetical operations:
+<ul><li>19: addition or subtraction (1 inside FMA instructions)</li><li>2: multiply (1 inside FMA instructions)</li><li>2: divide</li><li>1: square root</li></ul>The binary loop is loading 84 bytes (10 double precision FP elements).
+The binary loop is storing 8 bytes (1 double precision FP elements).
+</div></div><div class="_fixed_box" ><h3 class="_header">Arithmetic intensity</h3>
+<div class="_content">Arithmetic intensity is 0.26 FP operations per loaded or stored byte.
+</div></div></div>
+  <div id="tab8-4">
+<div class="_fixed_box" ><h3 class="_header">General properties</h3>
+<div class="_content"><table><tr><td>nb instructions</td><td>58</td></tr><tr><td>nb uops</td><td>59</td></tr><tr><td>loop length</td><td>265</td></tr><tr><td>used x86 registers</td><td>13</td></tr><tr><td>used mmx registers</td><td>0</td></tr><tr><td>used xmm registers</td><td>16</td></tr><tr><td>used ymm registers</td><td>0</td></tr><tr><td>used zmm registers</td><td>0</td></tr><tr><td>nb stack references</td><td>0</td></tr><tr><td>ADD-SUB / MUL ratio</td><td>18.00</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Front-end</h3>
+<div class="_content">ASSUMED MACRO FUSION
+FIT IN UOP CACHE
+<table><tr><td>micro-operation queue</td><td>11.80 cycles</td></tr><tr><td>front end</td><td>11.80 cycles</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Back-end</h3>
+<div class="_content"><table><tr><th>      </th><th>P0</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th><th>P7</th><th>P8</th><th>P9</th></tr><tr><td>uops</td><td>12.50</td><td>12.50</td><td>5.50</td><td>5.50</td><td>1.00</td><td>8.50</td><td>8.50</td><td>1.00</td><td>1.00</td><td>1.00</td></tr><tr><td>cycles</td><td>12.50</td><td>12.50</td><td>5.50</td><td>5.50</td><td>1.00</td><td>8.50</td><td>8.50</td><td>1.00</td><td>1.00</td><td>1.00</td></tr></table>
+<table><tr><td>Cycles executing div or sqrt instructions</td><td>12.50-14.00</td></tr><tr><td>Longest recurrence chain latency (RecMII)</td><td>1.00</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Cycles summary</h3>
+<div class="_content"><table><tr><td>Front-end</td><td>11.80</td></tr><tr><td>Dispatch</td><td>12.50</td></tr><tr><td>DIV/SQRT</td><td>12.50-14.00</td></tr><tr><td>Data deps.</td><td>1.00</td></tr><tr><td>Overall L1</td><td>12.50-14.00</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Vectorization ratios</h3>
+<div class="_content">INT
+<table><tr><td>all</td><td>0%</td></tr><tr><td>load</td><td>NA (no load vectorizable/vectorized instructions)</td></tr><tr><td>store</td><td>NA (no store vectorizable/vectorized instructions)</td></tr><tr><td>mul</td><td>NA (no mul vectorizable/vectorized instructions)</td></tr><tr><td>add-sub</td><td>NA (no add-sub vectorizable/vectorized instructions)</td></tr><tr><td>fma</td><td>NA (no fma vectorizable/vectorized instructions)</td></tr><tr><td>other</td><td>0%</td></tr></table>FP
+<table><tr><td>all</td><td>5%</td></tr><tr><td>load</td><td>0%</td></tr><tr><td>store</td><td>100%</td></tr><tr><td>mul</td><td>0%</td></tr><tr><td>add-sub</td><td>0%</td></tr><tr><td>fma</td><td>0%</td></tr><tr><td>div/sqrt</td><td>0%</td></tr><tr><td>other</td><td>50%</td></tr></table>INT+FP
+<table><tr><td>all</td><td>5%</td></tr><tr><td>load</td><td>0%</td></tr><tr><td>store</td><td>100%</td></tr><tr><td>mul</td><td>0%</td></tr><tr><td>add-sub</td><td>0%</td></tr><tr><td>fma</td><td>0%</td></tr><tr><td>div/sqrt</td><td>0%</td></tr><tr><td>other</td><td>20%</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Vector efficiency ratios</h3>
+<div class="_content">INT
+<table><tr><td>all</td><td>12%</td></tr><tr><td>load</td><td>NA (no load vectorizable/vectorized instructions)</td></tr><tr><td>store</td><td>NA (no store vectorizable/vectorized instructions)</td></tr><tr><td>mul</td><td>NA (no mul vectorizable/vectorized instructions)</td></tr><tr><td>add-sub</td><td>NA (no add-sub vectorizable/vectorized instructions)</td></tr><tr><td>fma</td><td>NA (no fma vectorizable/vectorized instructions)</td></tr><tr><td>other</td><td>12%</td></tr></table>FP
+<table><tr><td>all</td><td>12%</td></tr><tr><td>load</td><td>12%</td></tr><tr><td>store</td><td>12%</td></tr><tr><td>mul</td><td>12%</td></tr><tr><td>add-sub</td><td>12%</td></tr><tr><td>fma</td><td>12%</td></tr><tr><td>div/sqrt</td><td>12%</td></tr><tr><td>other</td><td>18%</td></tr></table>INT+FP
+<table><tr><td>all</td><td>12%</td></tr><tr><td>load</td><td>12%</td></tr><tr><td>store</td><td>12%</td></tr><tr><td>mul</td><td>12%</td></tr><tr><td>add-sub</td><td>12%</td></tr><tr><td>fma</td><td>12%</td></tr><tr><td>div/sqrt</td><td>12%</td></tr><tr><td>other</td><td>15%</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Cycles and memory resources usage</h3>
+<div class="_content">Assuming all data fit into the L1 cache, each iteration of the binary loop takes 14.00 cycles. At this rate:
+<ul><li>4% of peak load performance is reached (6.00 out of 128.00 bytes loaded per cycle (GB/s @ 1GHz))</li><li>0% of peak store performance is reached (0.57 out of 64.00 bytes stored per cycle (GB/s @ 1GHz))</li></ul>
+</div></div><div class="_fixed_box" ><h3 class="_header">Front-end bottlenecks</h3>
+<div class="_content">Found no such bottlenecks.
+</div></div><div class="_fixed_box" ><h3 class="_header">ASM code</h3>
+<div class="_content">In the binary file, the address of the loop is: 3f8c
+
+<table><tr><th>Instruction</th><th>Nb FU</th><th>P0</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th><th>P7</th><th>P8</th><th>P9</th><th>Latency</th><th>Recip. throughput</th></tr><tr><td style='word-break:break-all;'>MOV %R9D,%EAX</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>IMUL %R14D,%EAX</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td>1</td></tr><tr><td style='word-break:break-all;'>MOV (%R13),%RSI</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>ADD %EBP,%EAX</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>LEA (%RAX,%RAX,8),%EDI</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>LEA (%RSI,%RDI,8),%R8</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>TEST %R8,%R8</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>JE 40e6 </td><td>1</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50-1</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x28(%R8),%XMM8</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x8(%R8),%XMM1</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x10(%R8),%XMM2</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x18(%R8),%XMM5</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x20(%R8),%XMM4</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD (%R8),%XMM1,%XMM0</td><td>1</td><td>0.50</td><td>0.50</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM5,%XMM2,%XMM9</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM8,%XMM4,%XMM11</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x38(%R8),%XMM7</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x30(%R8),%XMM3</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM9,%XMM0,%XMM10</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM3,%XMM11,%XMM12</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM7,%XMM4,%XMM4</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM8,%XMM2,%XMM2</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x40(%R8),%XMM6</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM12,%XMM10,%XMM13</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM6,%XMM7,%XMM14</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM8,%XMM1,%XMM1</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM3,%XMM5,%XMM5</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VSUBSD %XMM4,%XMM2,%XMM8</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VSUBSD %XMM6,%XMM3,%XMM3</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM14,%XMM13,%XMM15</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VSUBSD %XMM7,%XMM6,%XMM9</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM3,%XMM8,%XMM7</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VSUBSD %XMM5,%XMM1,%XMM0</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VDIVSD %XMM15,%XMM7,%XMM6</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>13-14</td><td>4</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM9,%XMM0,%XMM10</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VDIVSD %XMM15,%XMM10,%XMM11</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>13-14</td><td>4</td></tr><tr><td style='word-break:break-all;'>VMULSD %XMM6,%XMM6,%XMM12</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VFMADD132SD %XMM11,%XMM12,%XMM11</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VSQRTSD %XMM11,%XMM11,%XMM11</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>13-19</td><td>4.50-6</td></tr><tr><td style='word-break:break-all;'>VUNPCKLPD %XMM15,%XMM11,%XMM13</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td style='word-break:break-all;'>VCVTPD2PS %XMM13,%XMM14</td><td>2</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>5</td><td>1</td></tr><tr><td style='word-break:break-all;'>VMOVLPS %XMM14,(%R15,%RDX,8)</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0.50</td><td>3</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>INC %RDX</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>CMP $0x1000,%RDX</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>JA 40c7 </td><td>1</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50-1</td></tr><tr><td style='word-break:break-all;'>JNE 3f60 </td><td>1</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50-1</td></tr><tr><td style='word-break:break-all;'>MOV %R12,%RCX</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>MOV $0x1000,%EDX</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>MOV $0x8,%ESI</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>MOV %R15,%RDI</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>CALL 11d0 <fwrite@plt></td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td><td>0</td><td>1</td><td>0.50</td><td>0.50</td><td>0.50</td><td>0</td><td>2</td></tr><tr><td style='word-break:break-all;'>MOV 0xc(%R13),%R9D</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>INC %RBP</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>LEA -0x1(%R9),%ECX</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>MOV %ECX,%R10D</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>XOR %EDX,%EDX</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>CMP %RBP,%R10</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>JA 3f6f </td><td>1</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50-1</td></tr></table>
+</div></div></div>
+</div></div>
+    </div>
+    <div id="loop_cqa_path_2">
+      <div style="padding-left:10px;margin-bottom: 10px;">
+        <table>
+          <tr><td class="_td_shift_20">Coverage</td><td>0.22 %</td></tr>
+          <tr><td class="_td_shift_20">Function</td><td><a href="../functions/lbm_12.html">save_frame</a></td></tr>
+          <tr><td class="_td_shift_20">Source file and lines</td><td></td></tr>
+        <tr><td class="_td_shift_20">Module</td><td>lbm</td></tr>
+        </table>
+<br />The structure of this loop is probably &lt;if then [else] end&gt;.<br /><br />The presence of multiple execution paths is typically the main/first bottleneck.<br />Try to simplify control inside loop: ideally, try to remove all conditional expressions, for example by (if applicable):<br /><ul><li>hoisting them (moving them outside the loop)</li><li>turning them into conditional moves, MIN or MAX</li></ul><br /><br />      </div><div class="_tab_box">
+  <div class="_tab_header">
+    <ul>
+      <li class="_tab_header_li selected_tab" data-tab="tab9-1" onclick="change_tab (this, 'tab9-')">gain</li>
+      <li class="_tab_header_li " data-tab="tab9-2" onclick="change_tab (this, 'tab9-')">potential</li>
+      <li class="_tab_header_li " data-tab="tab9-3" onclick="change_tab (this, 'tab9-')">hint</li>
+      <li class="_tab_header_li " data-tab="tab9-4" onclick="change_tab (this, 'tab9-')">expert</li>
+    </ul>
+  </div>
+  <div class="_tab_content">
+  <div id="tab9-1">
+<div class="_fixed_box" ><h3 class="_header">Vectorization</h3>
+<div class="_content">Your loop is not vectorized.
+Only 12% of vector register length is used (average across all SSE/AVX instructions).
+By fully vectorizing your loop, you can lower the cost of an iteration from 14.00 to 3.50 cycles (4.00x speedup).
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content">5% of SSE/AVX instructions are used in vector version (process two or more data elements in vector registers):
+<ul><li>0% of SSE/AVX loads are used in vector version.</li><li>0% of SSE/AVX addition or subtraction instructions are used in vector version.</li><li>0% of SSE/AVX multiply instructions are used in vector version.</li><li>0% of SSE/AVX fused multiply-add instructions are used in vector version.</li><li>0% of SSE/AVX nil are used in vector version.</li><li>20% of SSE/AVX instructions that are not load, store, addition, subtraction nor multiply instructions are used in vector version.</li></ul>Since your execution units are vector units, only a fully vectorized loop can use their full power.
+
+</div></div><div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content"><ul><li>Try another compiler or update/tune your current one</li><li>Remove inter-iterations dependences from your loop and make it unit-stride:
+<ul><li>If your arrays have 2 or more dimensions, check whether elements are accessed contiguously and, otherwise, try to permute loops accordingly</li><li>If your loop streams arrays of structures (AoS), try to use structures of arrays instead (SoA)</li></ul></li></ul>
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Execution units bottlenecks</h3>
+<div class="_content">Performance is limited by execution of divide and square root operations (the divide/square root unit is a bottleneck).
+
+By removing all these bottlenecks, you can lower the cost of an iteration from 14.00 to 12.50 cycles (1.12x speedup).
+
+<div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content"><ul><li>Reduce the number of division or square root instructions:
+<ul><li>If denominator is constant over iterations, use reciprocal (replace x/y with x*(1/y)). Check precision impact.</li></ul></li><li>Check whether you really need double precision. If not, switch to single precision to speedup execution</li></ul>
+</div></div></div></div></div>
+  <div id="tab9-2">
+<div class="_fixed_box" ><h3 class="_header">FMA</h3>
+<div class="_content">Detected 1 FMA (fused multiply-add) operations.
+Presence of both ADD/SUB and MUL operations.
+<div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content">Try to change order in which elements are evaluated (using parentheses) in arithmetic expressions containing both ADD/SUB and MUL operations to enable your compiler to generate FMA instructions wherever possible.
+For instance a + b*c is a valid FMA (MUL then ADD).
+However (a+b)* c cannot be translated into an FMA (ADD then MUL).
+</div></div></div></div></div>
+  <div id="tab9-3">
+<div class="_fixed_box" ><h3 class="_header">Complex instructions</h3>
+<div class="_content">Detected COMPLEX INSTRUCTIONS.
+
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content">These instructions generate more than one micro-operation and only one of them can be decoded during a cycle and the extra micro-operations increase pressure on execution units.
+<ul><li>VCVTPD2PS: 1 occurrences</li></ul>
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Slow data structures access</h3>
+<div class="_content">Detected data structures (typically arrays) that cannot be efficiently read/written
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content"><ul><li>Constant unknown stride: 1 occurrence(s)</li></ul>Non-unit stride (uncontiguous) accesses are not efficiently using data caches
+
+</div></div><div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content"><ul><li>Try to reorganize arrays of structures to structures of arrays</li><li>Consider to permute loops (see vectorization gain report)</li></ul>
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Conversion instructions</h3>
+<div class="_content">Detected expensive conversion instructions.
+<div class="_fixed_box" ><h3 class="_header">Details</h3>
+<div class="_content"><ul><li>VCVTPD2PS (FP64 to FP32, SIMD): 1 occurrences</li></ul>
+</div></div><div class="_fixed_box" ><h3 class="_header">Workaround</h3>
+<div class="_content">Avoid mixing data with different types. In particular, check if the type of constants is the same as array elements. Use double instead of single precision only when/where needed by numerical stability and avoid mixing precision.
+</div></div></div></div><div class="_fixed_box" ><h3 class="_header">Type of elements and instruction set</h3>
+<div class="_content">23 SSE or AVX instructions are processing arithmetic or math operations on double precision FP elements in scalar mode (one at a time).
+
+</div></div><div class="_fixed_box" ><h3 class="_header">Matching between your loop (in the source code) and the binary loop</h3>
+<div class="_content">The binary loop is composed of 24 FP arithmetical operations:
+<ul><li>19: addition or subtraction (1 inside FMA instructions)</li><li>2: multiply (1 inside FMA instructions)</li><li>2: divide</li><li>1: square root</li></ul>The binary loop is loading 80 bytes (10 double precision FP elements).
+The binary loop is storing 8 bytes (1 double precision FP elements).
+</div></div><div class="_fixed_box" ><h3 class="_header">Arithmetic intensity</h3>
+<div class="_content">Arithmetic intensity is 0.27 FP operations per loaded or stored byte.
+</div></div></div>
+  <div id="tab9-4">
+<div class="_fixed_box" ><h3 class="_header">General properties</h3>
+<div class="_content"><table><tr><td>nb instructions</td><td>50</td></tr><tr><td>nb uops</td><td>51</td></tr><tr><td>loop length</td><td>234</td></tr><tr><td>used x86 registers</td><td>12</td></tr><tr><td>used mmx registers</td><td>0</td></tr><tr><td>used xmm registers</td><td>16</td></tr><tr><td>used ymm registers</td><td>0</td></tr><tr><td>used zmm registers</td><td>0</td></tr><tr><td>nb stack references</td><td>0</td></tr><tr><td>ADD-SUB / MUL ratio</td><td>18.00</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Front-end</h3>
+<div class="_content">MACRO FUSION NOT POSSIBLE
+FIT IN UOP CACHE
+<table><tr><td>micro-operation queue</td><td>10.20 cycles</td></tr><tr><td>front end</td><td>10.20 cycles</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Back-end</h3>
+<div class="_content"><table><tr><th>      </th><th>P0</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th><th>P7</th><th>P8</th><th>P9</th></tr><tr><td>uops</td><td>12.50</td><td>12.50</td><td>5.00</td><td>5.00</td><td>0.50</td><td>7.00</td><td>7.00</td><td>0.50</td><td>0.50</td><td>0.50</td></tr><tr><td>cycles</td><td>12.50</td><td>12.50</td><td>5.00</td><td>5.00</td><td>0.50</td><td>7.00</td><td>7.00</td><td>0.50</td><td>0.50</td><td>0.50</td></tr></table>
+<table><tr><td>Cycles executing div or sqrt instructions</td><td>12.50-14.00</td></tr><tr><td>Longest recurrence chain latency (RecMII)</td><td>1.00</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Cycles summary</h3>
+<div class="_content"><table><tr><td>Front-end</td><td>10.20</td></tr><tr><td>Dispatch</td><td>12.50</td></tr><tr><td>DIV/SQRT</td><td>12.50-14.00</td></tr><tr><td>Data deps.</td><td>1.00</td></tr><tr><td>Overall L1</td><td>12.50-14.00</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Vectorization ratios</h3>
+<div class="_content">INT
+<table><tr><td>all</td><td>0%</td></tr><tr><td>load</td><td>NA (no load vectorizable/vectorized instructions)</td></tr><tr><td>store</td><td>NA (no store vectorizable/vectorized instructions)</td></tr><tr><td>mul</td><td>NA (no mul vectorizable/vectorized instructions)</td></tr><tr><td>add-sub</td><td>0%</td></tr><tr><td>fma</td><td>NA (no fma vectorizable/vectorized instructions)</td></tr><tr><td>other</td><td>0%</td></tr></table>FP
+<table><tr><td>all</td><td>5%</td></tr><tr><td>load</td><td>0%</td></tr><tr><td>store</td><td>100%</td></tr><tr><td>mul</td><td>0%</td></tr><tr><td>add-sub</td><td>0%</td></tr><tr><td>fma</td><td>0%</td></tr><tr><td>div/sqrt</td><td>0%</td></tr><tr><td>other</td><td>50%</td></tr></table>INT+FP
+<table><tr><td>all</td><td>5%</td></tr><tr><td>load</td><td>0%</td></tr><tr><td>store</td><td>100%</td></tr><tr><td>mul</td><td>0%</td></tr><tr><td>add-sub</td><td>0%</td></tr><tr><td>fma</td><td>0%</td></tr><tr><td>div/sqrt</td><td>0%</td></tr><tr><td>other</td><td>20%</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Vector efficiency ratios</h3>
+<div class="_content">INT
+<table><tr><td>all</td><td>10%</td></tr><tr><td>load</td><td>NA (no load vectorizable/vectorized instructions)</td></tr><tr><td>store</td><td>NA (no store vectorizable/vectorized instructions)</td></tr><tr><td>mul</td><td>NA (no mul vectorizable/vectorized instructions)</td></tr><tr><td>add-sub</td><td>12%</td></tr><tr><td>fma</td><td>NA (no fma vectorizable/vectorized instructions)</td></tr><tr><td>other</td><td>10%</td></tr></table>FP
+<table><tr><td>all</td><td>12%</td></tr><tr><td>load</td><td>12%</td></tr><tr><td>store</td><td>12%</td></tr><tr><td>mul</td><td>12%</td></tr><tr><td>add-sub</td><td>12%</td></tr><tr><td>fma</td><td>12%</td></tr><tr><td>div/sqrt</td><td>12%</td></tr><tr><td>other</td><td>18%</td></tr></table>INT+FP
+<table><tr><td>all</td><td>12%</td></tr><tr><td>load</td><td>12%</td></tr><tr><td>store</td><td>12%</td></tr><tr><td>mul</td><td>12%</td></tr><tr><td>add-sub</td><td>12%</td></tr><tr><td>fma</td><td>12%</td></tr><tr><td>div/sqrt</td><td>12%</td></tr><tr><td>other</td><td>13%</td></tr></table>
+</div></div><div class="_fixed_box" ><h3 class="_header">Cycles and memory resources usage</h3>
+<div class="_content">Assuming all data fit into the L1 cache, each iteration of the binary loop takes 14.00 cycles. At this rate:
+<ul><li>4% of peak load performance is reached (5.71 out of 128.00 bytes loaded per cycle (GB/s @ 1GHz))</li><li>0% of peak store performance is reached (0.57 out of 64.00 bytes stored per cycle (GB/s @ 1GHz))</li></ul>
+</div></div><div class="_fixed_box" ><h3 class="_header">Front-end bottlenecks</h3>
+<div class="_content">Found no such bottlenecks.
+</div></div><div class="_fixed_box" ><h3 class="_header">ASM code</h3>
+<div class="_content">In the binary file, the address of the loop is: 3f8c
+
+<table><tr><th>Instruction</th><th>Nb FU</th><th>P0</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th><th>P7</th><th>P8</th><th>P9</th><th>Latency</th><th>Recip. throughput</th></tr><tr><td style='word-break:break-all;'>INC %RBP</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>MOV %ECX,%R10D</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>CMP %RBP,%R10</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>JBE 4078 </td><td>1</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50-1</td></tr><tr><td style='word-break:break-all;'>MOV %R9D,%EAX</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>IMUL %R14D,%EAX</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td>1</td></tr><tr><td style='word-break:break-all;'>MOV (%R13),%RSI</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>ADD %EBP,%EAX</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>LEA (%RAX,%RAX,8),%EDI</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>LEA (%RSI,%RDI,8),%R8</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>TEST %R8,%R8</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>JE 40e6 </td><td>1</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50-1</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x28(%R8),%XMM8</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x8(%R8),%XMM1</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x10(%R8),%XMM2</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x18(%R8),%XMM5</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x20(%R8),%XMM4</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD (%R8),%XMM1,%XMM0</td><td>1</td><td>0.50</td><td>0.50</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM5,%XMM2,%XMM9</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM8,%XMM4,%XMM11</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x38(%R8),%XMM7</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x30(%R8),%XMM3</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM9,%XMM0,%XMM10</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM3,%XMM11,%XMM12</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM7,%XMM4,%XMM4</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM8,%XMM2,%XMM2</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VMOVSD 0x40(%R8),%XMM6</td><td>1</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM12,%XMM10,%XMM13</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM6,%XMM7,%XMM14</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM8,%XMM1,%XMM1</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM3,%XMM5,%XMM5</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VSUBSD %XMM4,%XMM2,%XMM8</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VSUBSD %XMM6,%XMM3,%XMM3</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM14,%XMM13,%XMM15</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VSUBSD %XMM7,%XMM6,%XMM9</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM3,%XMM8,%XMM7</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VSUBSD %XMM5,%XMM1,%XMM0</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VDIVSD %XMM15,%XMM7,%XMM6</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>13-14</td><td>4</td></tr><tr><td style='word-break:break-all;'>VADDSD %XMM9,%XMM0,%XMM10</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VDIVSD %XMM15,%XMM10,%XMM11</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>13-14</td><td>4</td></tr><tr><td style='word-break:break-all;'>VMULSD %XMM6,%XMM6,%XMM12</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VFMADD132SD %XMM11,%XMM12,%XMM11</td><td>1</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>VSQRTSD %XMM11,%XMM11,%XMM11</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>13-19</td><td>4.50-6</td></tr><tr><td style='word-break:break-all;'>VUNPCKLPD %XMM15,%XMM11,%XMM13</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td style='word-break:break-all;'>VCVTPD2PS %XMM13,%XMM14</td><td>2</td><td>0.50</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>5</td><td>1</td></tr><tr><td style='word-break:break-all;'>VMOVLPS %XMM14,(%R15,%RDX,8)</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td><td>0</td><td>0</td><td>0.50</td><td>0.50</td><td>0.50</td><td>3</td><td>0.50</td></tr><tr><td style='word-break:break-all;'>INC %RDX</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>CMP $0x1000,%RDX</td><td>1</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>0.25</td><td>0.25</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0.25</td></tr><tr><td style='word-break:break-all;'>JA 40c7 </td><td>1</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50-1</td></tr><tr><td style='word-break:break-all;'>JNE 3f60 </td><td>1</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.50-1</td></tr></table>
+</div></div></div>
+</div></div>
+    </div>
+  </div>
+  <script>
+function cqa_onresize ()
+{
+  var cur_path = parseInt (document.getElementById ("main_section_div").dataset.path);
+  var max_path = parseInt (document.getElementById ("main_section_div").dataset.maxpath);
+  document.getElementById ("path_selection_input").max = max_path;
+  document.getElementById ("path_selection_input_max").innerHTML = max_path;
+  _set_path (cur_path, max_path)
+}
+function cqa_loadhelp (divId) {
+  var e = document.getElementById (divId);
+  if (e != null) {
+    e.setAttribute ("title", "CQA analysis of the object (loop or function).");
+  }
+}
+  </script>
+</div>
+    <!-- =========================== End Of Storage ============================== -->
+</div>
+<script>
+function _set_path (p, nb_path) {
+  for (var i = 0; i < nb_path + 1; i++) {
+    if (i == p) {
+      if (document.getElementById("loop_static_path_" + i) != null) {
+        document.getElementById("loop_static_path_" + i).style.display = "table";
+      }
+      if (document.getElementById("loop_cqa_path_" + i) != null) {
+        document.getElementById("loop_cqa_path_" + i).style.display = "initial";
+      }
+      if (document.getElementById("cmp_cqa_" + i) != null) {      
+        document.getElementById("cmp_cqa_" + i).style.removeProperty("display");
+      }
+    }
+    else {
+      if (document.getElementById("loop_static_path_" + i) != null) {
+        document.getElementById("loop_static_path_" + i).style.display = "none";
+      }
+      if (document.getElementById("loop_cqa_path_" + i) != null) {
+        document.getElementById("loop_cqa_path_" + i).style.display = "none";
+      }
+      if (document.getElementById("cmp_cqa_" + i) != null) {
+        document.getElementById("cmp_cqa_" + i).style.display = "none";
+      }
+    }
+  }
+  document.getElementById ("main_section_div").dataset.path = p;
+  if (document.getElementById("path_selection_input") != null) {
+    document.getElementById("path_selection_input").value = p;
+  }
+  if (document.getElementById("path_selection_adv_input") != null) {
+    document.getElementById("path_selection_adv_input").value = p;
+  }
+  if (document.getElementById("path_selection_cmp_input") != null) {
+    document.getElementById("path_selection_cmp_input").value = p;
+  }
+}
+function set_path_input (id_input) {
+  var p = document.getElementById(id_input).value;
+  var nb_path = parseInt(document.getElementById("main_section_div").dataset.maxpath);
+  if (0 <= p && p <= nb_path) {
+    _set_path (p, nb_path);
+  }
+}
+function set_previous_path () {
+  var p = parseInt(document.getElementById("main_section_div").dataset.path);
+  var nb_path = parseInt(document.getElementById("main_section_div").dataset.maxpath);
+  if (p >= 1) {
+    _set_path (p - 1, nb_path);
+  }
+}
+function set_next_path () {
+  var p = parseInt(document.getElementById("main_section_div").dataset.path);
+  var nb_path = parseInt(document.getElementById("main_section_div").dataset.maxpath);
+  if (p < nb_path) {
+    _set_path (p + 1, nb_path);
+  }
+}
+function _set_bucket (b, nb_bucket) {
+  var e = document.getElementById("bucket_selection_select");
+  if (e == null) {
+    e = document.getElementById("bucket_selection_summary_select");
+  }
+  for (var i = 0; i < nb_bucket; i++) {
+    var idiv = e.options[i].value;
+    if (i == b) {
+      if (document.getElementById("loop_dyn_" + idiv) != null) {
+        document.getElementById("loop_dyn_" + idiv).style.display = "block";
+      }
+      if (document.getElementById("loop_DECAN_" + idiv) != null) {
+        document.getElementById("loop_DECAN_" + idiv).style.display = "block";
+      }
+      if (document.getElementById("loop_qprof_" + idiv) != null) {
+        document.getElementById("loop_qprof_" + idiv).style.display = "block";
+      }
+      if (document.getElementById("loop_cmp_qprof_" + idiv) != null) {
+        document.getElementById("loop_cmp_qprof_" + idiv).style.display = "block";
+      }
+      if (document.getElementById("loop_cmp_decan_" + idiv) != null) {
+        document.getElementById("loop_cmp_decan_" + idiv).style.display = "block";
+      }
+    }
+    else {
+      if (document.getElementById("loop_dyn_" + idiv) != null) {
+        document.getElementById("loop_dyn_" + idiv).style.display = "none";
+      }
+      if (document.getElementById("loop_DECAN_" + idiv) != null) {
+        document.getElementById("loop_DECAN_" + idiv).style.display = "none";
+      }
+      if (document.getElementById("loop_qprof_" + idiv) != null) {
+        document.getElementById("loop_qprof_" + idiv).style.display = "none";
+      }
+      if (document.getElementById("loop_cmp_qprof_" + idiv) != null) {
+        document.getElementById("loop_cmp_qprof_" + idiv).style.display = "none";
+      }
+      if (document.getElementById("loop_cmp_decan_" + idiv) != null) {
+        document.getElementById("loop_cmp_decan_" + idiv).style.display = "none";
+      }
+    }
+  }
+  document.getElementById ("main_section_div").dataset.bucket = b;
+  if (document.getElementById("bucket_selection_select") != null) {
+    document.getElementById("bucket_selection_select").selectedIndex = b;
+  }
+  if (document.getElementById("bucket_selection_summary_select") != null) {
+    document.getElementById("bucket_selection_summary_select").selectedIndex = b;
+  }
+  if (document.getElementById("bucket_selection_select_qprof") != null) {
+    document.getElementById("bucket_selection_select_qprof").selectedIndex = b;
+  }
+  if (document.getElementById("bucket_selection_select_cmp_qprof") != null) {
+    document.getElementById("bucket_selection_select_cmp_qprof").selectedIndex = b;
+  }
+  if (document.getElementById("bucket_selection_select_cmp_decan") != null) {
+    document.getElementById("bucket_selection_select_cmp_decan").selectedIndex = b;
+  }
+}
+function set_bucket_input (id_input) {
+  var e = document.getElementById(id_input);
+  var nb_bucket = parseInt (document.getElementById("main_section_div").dataset.maxbucket);
+  if (0 <= e.selectedIndex && e.selectedIndex < nb_bucket) {
+    _set_bucket (e.selectedIndex, nb_bucket);
+  }
+}
+function set_previous_bucket () {
+  var bucket = parseInt (document.getElementById("main_section_div").dataset.bucket);
+  var nb_bucket = parseInt (document.getElementById("main_section_div").dataset.maxbucket);
+  if (bucket > 0) {
+    _set_bucket (bucket - 1, nb_bucket);
+  }
+}
+function set_next_bucket () {
+  var bucket = parseInt (document.getElementById("main_section_div").dataset.bucket);
+  var nb_bucket = parseInt (document.getElementById("main_section_div").dataset.maxbucket);
+  if (bucket < nb_bucket - 1) {
+    _set_bucket (bucket + 1, nb_bucket);
+  }
+}
+function extract_panel (selector) {
+  // Open the panel in a new window / tab
+  var url   = new URL(window.location.href);
+  window.open(url.href+"?panel="+selector.value);
+}
+// Resize panels on page size changes
+function _onresize () {
+  __maqao_legacy_onresize ();
+  var filler_height = document.getElementById ("spacer_page_title").offsetHeight
+                    + document.getElementById ("object_summary").offsetHeight;
+  var bottom_offset = filler_height + 20;
+  var w = window,
+      d = document,
+      e = d.documentElement,
+      g = d.getElementsByTagName("body")[0],
+      x = w.innerWidth || e.clientWidth || g.clientWidth,
+      y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+  var obj = document.getElementById("main_section_div");
+  if (y - bottom_offset > 0) {
+    obj.style.height = (y - bottom_offset)+"px";
+    obj.style.maxHeight = (y - bottom_offset)+"px";
+  }
+  obj = document.getElementById("leftpanelcontent");
+  if (obj && y - bottom_offset > 0) {
+    obj.style.height = (y - bottom_offset - 37)+"px";
+    obj.style.maxHeight = (y - bottom_offset - 37)+"px";
+  }
+  obj = document.getElementById("rightpanelcontent");
+  if (obj && y - bottom_offset > 0) {
+    obj.style.height = (y - bottom_offset - 37)+"px";
+    obj.style.maxHeight = (y - bottom_offset - 37)+"px";
+  }
+  obj = document.getElementById("dragbar");
+  if (obj && y - bottom_offset > 0) {
+    obj.style.height = (y - bottom_offset - 30)+"px";
+    obj.style.maxHeight = (y - bottom_offset - 30)+"px";
+  }
+  var list = document.getElementsByClassName("_panelcontent");
+  for (var i = 0; i < list.length; i++) {
+    if (y - bottom_offset > 0) {
+      list[i].style.height = (y - bottom_offset - 34)+"px";
+      list[i].style.maxHeight = (y - bottom_offset - 34)+"px";
+    }
+  }
+  {
+    var selector = document.getElementById ("leftpanelselector");
+    if (selector) {
+      var sec = selector.value.substring (6);
+      eval ("if (typeof "+sec+"_onresize === \"function\") {"+sec+"_onresize ()}");
+    }
+  }
+  {
+    var selector = document.getElementById ("rightpanelselector");
+    if (selector) {
+      var sec = selector.value.substring (6);
+      eval ("if (typeof "+sec+"_onresize === \"function\") {"+sec+"_onresize ()}");
+    }
+  }
+  var d = document.getElementById("drag-right");
+  if (d) {
+    d.style.maxWidth = x+"px";
+  }
+}
+// Resize some objects at the page loading
+addLoadEvent(function(){
+  _onresize ();
+  var bar = document.getElementById("dragbar");
+  var new_size = (document.getElementById ("drag-left").clientWidth * (3/2) - bar.offsetWidth - 5)+"px";
+  document.getElementById ("drag-right").style.width = new_size;
+  document.getElementById ("drag-right").style.maxWidth = new_size;
+});
+// Resize some objects when the page size changes
+var resizeId;
+window.addEventListener("resize", function() {
+  clearTimeout(resizeId);
+  resizeId = setTimeout(_onresize, 250);
+});
+// ------------------------------------------------------------------
+// Handle resizable panels
+var left = document.getElementById("drag-left");
+var right = document.getElementById("drag-right");
+var bar = document.getElementById("dragbar");
+const drag = (ev) => {
+  var shreshold = 15;
+  document.selection ? document.selection.empty() : window.getSelection().removeAllRanges();
+  var w = window,
+      d = document,
+      e = d.documentElement,
+      g = d.getElementsByTagName("body")[0],
+      x = w.innerWidth || e.clientWidth || g.clientWidth;
+  var loc = (ev.pageX - bar.offsetWidth / 2);
+  if (loc < shreshold) {
+    left.style.display = "none";
+  }
+  else if (loc > x - shreshold) {
+    right.style.display = "none";
+  }
+  else {
+    left.style.width = (ev.pageX - bar.offsetWidth / 2) + "px";
+    left.style.display = "block";
+    right.style.maxWidth = x - ((ev.pageX - bar.offsetWidth / 2)) + "px";
+    right.style.display = "block";
+  }
+  {
+    var selector = document.getElementById ("leftpanelselector");
+    var sec = selector.value.substring (6);
+    eval ("if (typeof "+sec+"_onresize === \"function\") {"+sec+"_onresize ()}");
+  }
+  {
+    var selector = document.getElementById ("rightpanelselector");
+    var sec = selector.value.substring (6);
+    eval ("if (typeof "+sec+"_onresize === \"function\") {"+sec+"_onresize ()}");
+  }
+}
+bar.addEventListener("mousedown", () => {
+  document.addEventListener("mousemove", drag);
+});
+document.addEventListener("mouseup", () => {
+  document.removeEventListener("mousemove", drag);
+});
+// Change panel content
+function _changepanel (panelId, selector, secSelectorName, helpName) {
+  var panel = document.getElementById (panelId);
+  if (panel != null) {
+    var sec = selector.value.substring (6);
+    // Handle selector disabling
+    var secSelector = document.getElementById (secSelectorName);
+    for (var i = 0; i < secSelector.length; i++) {
+      if (secSelector [i].value == selector.value) {
+        secSelector [i].setAttribute ("disabled", "");
+      } else {
+        secSelector [i].removeAttribute ("disabled");
+      }
+    }
+    var curPanel = document.getElementById("main_section_div").dataset[panelId]
+    document.getElementById (curPanel).innerHTML = document.getElementById (panelId).innerHTML;
+    document.getElementById (panelId).innerHTML = document.getElementById ("OV_"+selector.value).innerHTML;
+    document.getElementById ("OV_"+selector.value).innerHTML = "";
+    eval ("if (typeof "+sec+"_onresize === \"function\") {"+sec+"_onresize (panelId)}");
+    eval ("if (typeof "+sec+"_loadhelp === \"function\") {"+sec+"_loadhelp (helpName)}");
+    document.getElementById("main_section_div").dataset[panelId] = "OV_"+selector.value;
+  }
+}
+// At page loading, handle panel contents
+addLoadEvent(function(){
+  var url   = new URL(window.location.href);
+  var panel = url.searchParams.get("panel");
+  if (panel != null) {
+    // Update page content
+    document.getElementById ("page_title").style.display = "none"; // TODO - sumarize loop
+    document.getElementById ("spacer_page_title").style.display = "none";
+    // Load panel
+    var sec = panel.substring (6);
+    document.getElementById ("main_section_content").classList.remove ("drag-container");
+    document.getElementById ("main_section_content").style.overflow = "auto";
+    document.getElementById ("main_section_content").innerHTML = document.getElementById ("OV_"+panel).innerHTML;
+    document.getElementById ("OV_"+panel).innerHTML = "";
+    eval ("if (typeof "+sec+"_onresize === \"function\") {"+sec+"_onresize (\"rightpanelcontent\")}");
+    eval ("if (typeof "+sec+"_loadhelp === \"function\") {"+sec+"_loadhelp (\"rightpanelhelp\")}");
+  }
+  else {
+    {
+      var selector = document.getElementById ("leftpanelselector");
+      var sec = selector.value.substring (6);
+      document.getElementById ("leftpanelcontent").innerHTML = document.getElementById ("OV_"+selector.value).innerHTML;
+      document.getElementById ("OV_"+selector.value).innerHTML = "";
+      eval ("if (typeof "+sec+"_onresize === \"function\") {"+sec+"_onresize (\"leftpanelcontent\")}");
+      eval ("if (typeof "+sec+"_loadhelp === \"function\") {"+sec+"_loadhelp (\"leftpanelhelp\")}");
+      document.getElementById("main_section_div").dataset.leftpanelcontent = "OV_"+selector.value;
+    }
+    {
+      var selector = document.getElementById ("rightpanelselector");
+      var sec = selector.value.substring (6);
+      document.getElementById ("rightpanelcontent").innerHTML = document.getElementById ("OV_"+selector.value).innerHTML;
+      document.getElementById ("OV_"+selector.value).innerHTML = "";
+      eval ("if (typeof "+sec+"_onresize === \"function\") {"+sec+"_onresize (\"rightpanelcontent\")}");
+      eval ("if (typeof "+sec+"_loadhelp === \"function\") {"+sec+"_loadhelp (\"rightpanelhelp\")}");
+      document.getElementById("main_section_div").dataset.rightpanelcontent = "OV_"+selector.value;
+    }
+  }
+});
+</script>
+<style>
+.drag-container {
+  display: flex;
+  height: 100%;
+}
+.panel-one {
+  width: 40%;
+}
+.panel-two {
+  flex: 1;
+  width: 60%;
+}
+.dragbar {
+  padding: 6px;
+  margin-top: 5px;
+  cursor: col-resize;
+  background-color: var(--header_background);
+}
+.extract-maqao {
+  background:url("../images/OV_extract_20.png") no-repeat;
+  width:20px;
+  height:20px;
+  float: right;
+  margin-right: 20px;
+  cursor:pointer;
+}
+</style>
+
+  <div id="MaqaoModal" class="maqao_modal">
+    <div class="maqao_modal-content">
+      <div class="maqao_modal-header">
+        <span class="maqao_close">&times;</span>
+      </div>
+      <div id="maqao_modal-body" class="maqao_modal-body">
+      </div>
+    </div>
+  </div>
+</div><script>
+var modal = document.getElementById('MaqaoModal');
+var span = document.getElementsByClassName("maqao_close")[0];
+span.onclick = function() {
+    modal.style.display = "none";
+}
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
+    v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v2 - v1 : v1.toString().localeCompare(v2)
+    )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+addLoadEvent(function(){
+  document.querySelectorAll('._fixed_table th').forEach(th => th.addEventListener('click', (() => {
+    const table = th.closest('table');
+    // Remove all symbols in header
+    table.querySelectorAll('th').forEach(function (e) {
+      e.firstChild.textContent = "";
+    });
+    // Change the symbol on the clicked header
+    if (this.asc != true) {
+      th.firstChild.textContent = "\u25BC";
+    }
+    else {
+      th.firstChild.textContent = "\u25B2";
+    }
+    Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+        .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+        .forEach(tr => table.appendChild(tr) );
+  })));
+});
+function _check_all_checkbox_ (obj_id, opts_ids) {
+  var obj   = document.getElementById (obj_id);
+  var opts  = window[opts_ids];
+  var count = 0
+  for (i = 0; i < opts.length; i++) {
+    var obj_s = document.getElementById(opts[i]);
+    if (obj_s.checked) {
+      count ++;
+    }
+  }
+  if (count == 0) {
+    obj.value = "Select all";
+  }
+  else if (count == opts.length) {
+    obj.value = "Select none";
+  }
+}
+// Fonction for table selector
+function click_table_menu (c, obj_id, opt_ids) {
+  var is_checked = document.getElementById (c).checked;
+  localStorage.setItem("__functions_"+c, is_checked);
+  $("."+c).each(function(index, element) {
+    if (is_checked) {
+      element.classList.remove("_tcol_hidden");
+    }
+    else {
+      element.classList.add("_tcol_hidden");
+    }
+  });
+  if (obj_id != undefined) {
+    _check_all_checkbox_ (obj_id, opt_ids)
+  }
+}
+function set_all_table_menu (obj, var_opt_ids) {
+  var opt_ids = window[var_opt_ids];
+  var is_selected = true
+  if (obj.value == "Select all") {
+    is_selected = false;
+  }
+  for (i = 0; i < opt_ids.length; i++) {
+    var obj_s = document.getElementById(opt_ids[i]);
+    if (is_selected == obj_s.checked) {
+      obj_s.checked = !obj_s.checked;
+      click_table_menu (opt_ids[i]);
+    }
+  }
+  if (is_selected == false) {
+    obj.value = "Select none";
+  } else {
+    obj.value = "Select all";
+  }
+  localStorage.setItem(obj.id, obj.value);
+}
+// Script for accordion box
+function _click_accordion_header(obj) {
+  var content = obj.nextSibling;
+  content.classList.toggle('collapsed');
+  obj.classList.toggle('collapsed');
+  obj.parentNode.classList.toggle('collapsed');
+  // Check if the box must be openned ...
+  if (obj.classList.contains ('collapsed'))
+  {
+    obj.firstChild.textContent = "\u25B6";
+  }
+  // or closed.
+  else 
+  {
+    obj.firstChild.textContent = "\u25BC";
+  }
+  if (typeof _onresize === "function") {
+    _onresize ();
+  }
+}
+  // Script for paged table
+function _click_paged_prev(obj) {
+  var pages_content_id = '_paged_tables_page_' + obj.parentNode.parentNode.id.substr (obj.parentNode.parentNode.id.lastIndexOf('_') + 1);
+  var pages_content = document.getElementById(pages_content_id).innerHTML;
+  var max_pages = pages_content.substr (pages_content.lastIndexOf('/') + 1);
+  var cur_page  = pages_content.substring (pages_content.lastIndexOf(' ') + 1, pages_content.lastIndexOf('/'));
+  max_pages = Number (max_pages);
+  cur_page  = Number (cur_page);
+  if (cur_page > 1) {
+    var div_paged = obj.parentNode.parentNode.id;
+    var i;
+    var x = document.getElementsByClassName(div_paged + '_' + (cur_page - 1));
+    for (i = 0; i < x.length; i++) {
+      x[i].classList.toggle('_paged_hidden');
+    }
+    x = document.getElementsByClassName(div_paged + '_' + (cur_page - 2));
+    for (i = 0; i < x.length; i++) {
+      x[i].classList.toggle('_paged_hidden');
+    }
+  document.getElementById(pages_content_id).textContent = "Page " + (cur_page - 1) + "/" + max_pages;
+  }
+}
+function _click_paged_next(obj) {
+  var pages_content_id = '_paged_tables_page_' + obj.parentNode.parentNode.id.substr (obj.parentNode.parentNode.id.lastIndexOf('_') + 1);
+  var pages_content = document.getElementById(pages_content_id).innerHTML;
+  var max_pages = pages_content.substr (pages_content.lastIndexOf('/') + 1);
+  var cur_page  = pages_content.substring (pages_content.lastIndexOf(' ') + 1, pages_content.lastIndexOf('/'));
+  max_pages = Number (max_pages);
+  cur_page  = Number (cur_page);
+  if (cur_page < max_pages) {
+    var div_paged = obj.parentNode.parentNode.id;
+    var i;
+    var x = document.getElementsByClassName(div_paged + '_' + (cur_page - 1));
+    for (i = 0; i < x.length; i++) {
+      x[i].classList.toggle('_paged_hidden');
+    }
+    x = document.getElementsByClassName(div_paged + '_' + cur_page);
+    for (i = 0; i < x.length; i++) {
+      x[i].classList.toggle('_paged_hidden');
+    }
+    document.getElementById(pages_content_id).textContent = "Page " + (cur_page + 1) + "/" + max_pages;
+  }
+}
+// Function for tree table
+function _click_treed(obj) {
+  if (obj.innerHTML == "\u25BA") {
+    obj.textContent = "\u25BC";
+    // Open childs
+    var x = document.getElementsByClassName(obj.parentNode.parentNode.id);
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.toggle('_treed_hidden');
+    }
+  }
+  else if (obj.innerHTML == "\u25BC") {
+    obj.textContent = "\u25BA";
+    // Close all childs
+    var trs = document.getElementsByTagName('tr');
+    var r   = obj.parentNode.parentNode.id+'_';
+    var re  = new RegExp (r, "g");
+    for (var i = 0; i < trs.length; i++) {
+      var s = trs[i].id+""
+      if (s.match(re)) {
+        var o = document.getElementById(s);
+        if (! o.classList.contains('_treed_hidden')) {
+          o.classList.toggle('_treed_hidden');
+        }
+        if (o.firstChild.firstChild.textContent == "\u25BC") {
+          o.firstChild.firstChild.textContent = "\u25BA";
+        }
+        if (o.firstChild.childNodes.length == 3) {
+          o.firstChild.childNodes[2].textContent = '+';
+        }
+      }
+    }
+    if (obj.parentNode.childNodes.length == 3) {
+      obj.parentNode.childNodes[2].textContent = '+';
+    }
+  }
+}
+function _click_expand (obj) {
+  var trs = document.getElementsByTagName('tr');
+  var r   = obj.parentNode.parentNode.id+'_';
+  var re  = new RegExp (r, "g");
+  // Symbole + => expand all
+  if (obj.textContent == "+") {
+    for (var i = 0; i < trs.length; i++) {
+      var s = trs[i].id+"";
+      if (s.match(re)) {
+        var o = document.getElementById(s);
+        if (o.classList.contains('_treed_hidden')) {
+           o.classList.toggle('_treed_hidden');
+        }
+        if (o.firstChild.firstChild.textContent == "\u25BA") {
+          o.firstChild.firstChild.textContent = "\u25BC";
+        }
+        if (o.firstChild.childNodes.length == 3) {
+          o.firstChild.childNodes[2].textContent = '\u2010';
+        }
+      }
+    }
+    var o = obj.parentNode.parentNode;
+    if (o.firstChild.firstChild.textContent == "\u25BA") {
+      o.firstChild.firstChild.textContent = "\u25BC";
+    }
+    obj.textContent = "\u2010";
+  }
+  // Symbole - => collapse all
+  else {
+    for (var i = 0; i < trs.length; i++) {
+      var s = trs[i].id+"";
+      if (s.match(re)) {
+        var o = document.getElementById(s);
+        if (! o.classList.contains('_treed_hidden')) {
+           o.classList.toggle('_treed_hidden');
+        }
+        if (o.firstChild.firstChild.textContent == "\u25BC") {
+          o.firstChild.firstChild.textContent = "\u25BA";
+        }
+        if (o.firstChild.childNodes.length == 3) {
+          o.firstChild.childNodes[2].textContent = '+';
+        }
+      }
+    }
+    var o = obj.parentNode.parentNode;
+    if (o.firstChild.firstChild.textContent == "\u25BC") {
+      o.firstChild.firstChild.textContent = "\u25BA";
+    }
+    obj.textContent = "+";
+  }
+}
+// Hide unselected tabs
+addLoadEvent(function(){
+  var x = document.getElementsByClassName("_tab_header_li");
+  for (var i = 0; i < x.length; i++) {
+    if (x[i].classList.contains("selected_tab") == false) {
+      var e = document.getElementById (x[i].dataset.tab);
+      e.style.display = "none";
+    }
+  }
+});
+// Change tab
+function change_tab (e, baseId) {
+  // Handle tabs
+  var i = 1;
+  while (true) {
+    var id = baseId + i;
+    var t = document.getElementById (id);
+    if (t == null) {
+      break;
+    }
+    if (id == e.dataset.tab) {
+      t.style.removeProperty("display");
+    }
+    else {
+      t.style.display = "none";
+    }
+    i = i + 1;
+  }
+  // Handle headers
+  $(e).siblings().each( function () {
+    this.classList.remove("selected_tab");
+  });
+  e.classList.add("selected_tab");
+}
+function __maqao_legacy_onresize () {
+  var obj = document.getElementById("spacer_page_title");
+  if (obj) {
+    obj.style.height = (document.getElementById("page_title").clientHeight + 20)+"px";
+  }
+  var obj = document.getElementById("page_title");
+  if (obj) {
+    var elems = document.getElementsByClassName ("_first_menu_level")
+    if (obj.clientHeight < 90) {
+      for (var i = 0; i < elems.length; i++) {
+        elems.item(i).style.borderBottomLeftRadius = "";
+        elems.item(i).style.borderBottomRightRadius = "";
+      }
+    }
+    else {
+      for (var i = 0; i < elems.length; i++) {
+        elems.item(i).style.borderBottomLeftRadius = "10px";
+        elems.item(i).style.borderBottomRightRadius = "10px";
+      }
+    }
+  }
+}
+</script>
+</body>
+</html>

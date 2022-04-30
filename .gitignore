@@ -13,4 +13,4 @@ maqao/
 *.png
 *.raw
 *.json
-config.lua
+**/config.lua

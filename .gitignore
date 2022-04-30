@@ -5,6 +5,7 @@ GIF_TMP/
 tmp/
 benchmarks/
 plots/
+maqao/
 
 # Files to ignore
 *.gif
@@ -12,3 +13,4 @@ plots/
 *.png
 *.raw
 *.json
+config.lua

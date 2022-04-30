@@ -1,1 +1,0 @@
-maqao.intel64 oneview --create-report=one --output-format=html --config=config.lua -xp=maqao --replace 

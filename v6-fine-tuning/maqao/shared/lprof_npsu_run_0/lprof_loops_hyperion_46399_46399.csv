@@ -1,8 +1,0 @@
-loop_id;module;function_name;function_id;source_info;level;time_p;time_s;time_s_min;time_s_avg;time_s_max;cov_deviation;nb_threads;
-15;lbm;propagation._omp_fn.0;9;;Single;46.53;20.04;;;;;;
-16;lbm;collision._omp_fn.0;10;;Single;45;19.38;;;;;;
-4;lbm;main;1;;Innermost;1.87;0.81;;;;;;
-18;lbm;save_frame;12;;Innermost;0.86;0.37;;;;;;
-3;lbm;main;1;;InBetween;0.02;0.01;;;;;;
-13;lbm;setup_init_state;8;;Innermost;0.01;0.01;;;;;;
-2;lbm;main;1;;InBetween;0.01;0.01;;;;;;

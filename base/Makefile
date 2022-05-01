@@ -3,6 +3,7 @@ CC := gcc
 MPICC := mpicc
 MPICMD := mpiexec
 MAKEDEPEND := makedepend
+BROWSER := brave
 
 # Flags
 CFLAGS := -Wall -Wextra -g -I include/
@@ -29,16 +30,16 @@ run: target/lbm
 	$(MPICMD) $(MPIFLAGS) $^
 
 gif: $(GIF)
-	@brave $^ &
+	@$(BROWSER) $^ &
 
 check: target/display
-	@bash ../scripts/check_sim.sh $(RAW)
+	@bash ../scripts/checksum.sh $(RAW)
 
 trace: $(TRACE)
 	@bash ../scripts/interpol_report.sh $<
 
 bench: target/lbm
-	@bash ../scripts/bench.sh $(MODE) $(MPICMD) target/lbm
+	@bash ../scripts/bench.sh $^ $(MODE) $(MPICMD) $(FLAGS)
 
 $(TRACES): target/lbm
 	LD_PRELOAD=libinterpol.so $(MPICMD) $(MPIFLAGS) $?
@@ -59,7 +60,7 @@ $(DEPS)/%.o: $(SRC)/%.c
 
 target/lbm: $(LBM_OBJECTS) $(SRC)/main.c
 	@mkdir -p target
-	$(MPICC) $(CFLAGS) $(OFLAGS) $^ -o $@ $(LDFLAGS)
+	$(MPICC) $(DEF) $(CFLAGS) $(OFLAGS) $^ -o $@ $(LDFLAGS)
 
 target/display: $(SRC)/display.c
 	@mkdir -p target

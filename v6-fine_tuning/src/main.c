@@ -228,11 +228,11 @@ int main(int argc, char* argv[argc + 1])
                MPI_COMM_WORLD);
 
 #if defined(NO_DUMP)
-    printf("\n\033[1mRank \033[33m%d\033[0m: local average loop latency: "
+    printf("\033[1mRank \033[33m%d\033[0m: local average loop latency: "
            "\033[36m%.6lfms\033[0m (file dump not measured)\n",
            rank, local_avg_loop_latency * 1000.0);
 #elif !defined(NO_DUMP)
-    printf("\n\033[1mRank \033[33m%d\033[0m: local average loop latency: "
+    printf("\033[1mRank \033[33m%d\033[0m: local average loop latency: "
            "\033[36m%.6lfms\033[0m\n",
            rank, local_avg_loop_latency * 1000.0);
 #endif

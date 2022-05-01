@@ -19,14 +19,20 @@ function check_cfg {
 }
 
 function min {
-    if [ $1 -le $2 ]; then
+    if [ $1 -eq $2 ]; then
+        ok="yes"
         echo "$(($1 - 1))"
     else
-        echo "$(($2 - 1))"
+        ok=""
+        if [ $1 -lt $2 ]; then
+            echo "$(($1 - 1))"
+        else
+            echo "$(($2 - 1))"
+        fi
     fi
 }
 
-base_raw=../base/ref.raw
+base_raw=../base/ref_resultat_200.raw
 if [ -f $base_raw ]; then
     :
 else
@@ -56,8 +62,13 @@ sim_height=$(get_field 'height' $sim_raw)
 sim_frames=$(get_field 'frames' $sim_raw)
 check_cfg $base_width $sim_width $base_height $sim_height $base_frames $sim_frames
 
+limit=$(min $base_frames $sim_frames)
+if [ -z $ok ]; then
+    printf "\033[1;36minfo:\033[0m checking only first %d frames.\n" $(($limit + 1))
+fi
+
 printf "\033[1;34m==>\033[0m Verifying checksum for \033[35m%s\033[0m... " $sim_raw
-for i in $(seq 0 $(min $base_frames $sim_frames)); do
+for i in $(seq 0 $min); do
     base_checksum=$(target/display --checksum $base_raw $i)
     sim_checksum=$(target/display --checksum $sim_raw $i)
 

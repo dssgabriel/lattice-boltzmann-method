@@ -32,16 +32,16 @@ gif: $(GIF)
 	@brave $^ &
 
 check: target/display
-	@bash ../scripts/check_sim.sh $(RAW)
+	@bash ../scripts/checksum.sh $(RAW)
 
 trace: $(TRACE)
-	@bash ../scripts/interpol_report.sh $<
+	@bash ../scripts/interpol_report.sh $^
 
 bench: target/lbm
-	@bash ../scripts/bench.sh $(MODE) $(MPICMD) target/lbm
+	@bash ../scripts/bench.sh $^ $(MODE) $(MPICMD) $(FLAGS)
 
 $(TRACES): target/lbm
-	LD_PRELOAD=libinterpol.so $(MPICMD) $(MPIFLAGS) $?
+	LD_PRELOAD=libinterpol.so $(MPICMD) $(MPIFLAGS) $^
 	
 $(TRACE): $(TRACES)
 	@bash ../scripts/interpol_concat.sh $@

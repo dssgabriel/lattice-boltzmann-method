@@ -182,7 +182,6 @@ int main(int argc, char* argv[argc + 1])
     struct timespec overall_before, overall_after;
     struct timespec loop_before, loop_after;
     double* loop_latencies = malloc(ITERATIONS * sizeof(double));
-    ;
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &overall_before);
     // Time steps
@@ -205,21 +204,23 @@ int main(int argc, char* argv[argc + 1])
         // Need to wait all before doing next step
         MPI_Barrier(MPI_COMM_WORLD);
 
+#if defined(NO_IO)
+        // Measure time
+        clock_gettime(CLOCK_MONOTONIC_RAW, &loop_after);
+        loop_latencies[i] = elapsed(loop_before, loop_after);
+#endif
+
         // Save step
         if (i % WRITE_STEP_INTERVAL == 0 &&
             lbm_gbl_config.output_filename != NULL) {
             save_frame_all_domain(fp, &mesh, &temp_render);
         }
 
+#if !defined(NO_IO)
         // Measure time
         clock_gettime(CLOCK_MONOTONIC_RAW, &loop_after);
         loop_latencies[i] = elapsed(loop_before, loop_after);
-
-        // Print progress
-        if (rank == RANK_MASTER) {
-            printf("Computing simulation step %5zu/%5d (%3.2f%%)\r", i + 1,
-                   ITERATIONS, (float)(i + 1) / ITERATIONS * 100.0);
-        }
+#endif
     }
     clock_gettime(CLOCK_MONOTONIC_RAW, &overall_after);
     double const local_latency = elapsed(overall_before, overall_after);
@@ -237,21 +238,33 @@ int main(int argc, char* argv[argc + 1])
     MPI_Reduce(&local_latency, &global_latency, 1, MPI_DOUBLE, MPI_SUM, 0,
                MPI_COMM_WORLD);
 
-    printf("\r%80c\r\033[1mRank \033[33m%d\033[0m: local average loop latency: "
+#if defined(NO_IO)
+    printf("\033[1mRank \033[33m%d\033[0m: local average loop latency: "
+           "\033[36m%.6lfms\033[0m    (I/Os not measured)\n",
+           rank, local_avg_loop_latency * 1000.0);
+#elif !defined(NO_IO)
+    printf("\033[1mRank \033[33m%d\033[0m: local average loop latency: "
            "\033[36m%.6lfms\033[0m\n",
-           ' ', rank, local_avg_loop_latency * 1000.0);
-    printf("\r%80c\r\033[1mRank \033[33m%d\033[0m: local simulation latency:   "
-           "\033[36m%.9lfs\033[0m\n\n",
-           ' ', rank, local_latency);
-    if (rank == RANK_MASTER) {
-        printf("Global average loop latency:        %.6lfms\n",
-               global_avg_loop_latency / comm_size * 1000.0);
-        printf("Global simulation latency:          %.9lfs\n",
-               global_latency / comm_size);
-    }
+           rank, local_avg_loop_latency * 1000.0);
+#endif
+    printf("\033[1mRank \033[33m%d\033[0m: local simulation latency:   "
+           "\033[36m%.9lfs\033[0m\n",
+           rank, local_latency);
 
     if (rank == RANK_MASTER && fp != NULL) {
         close_file(fp);
+    }
+
+    if (rank == RANK_MASTER) {
+#if defined(NO_IO)
+        printf("\nGlobal average loop latency:        %.6lfms    (I/Os not measured)\n",
+               global_avg_loop_latency / comm_size * 1000.0);
+#elif !defined(NO_IO)
+        printf("\nGlobal average loop latency:        %.6lfms\n",
+               global_avg_loop_latency / comm_size * 1000.0);
+#endif
+        printf("Global simulation latency:          %.9lfs\n",
+               global_latency / comm_size);
     }
 
     // Free memory

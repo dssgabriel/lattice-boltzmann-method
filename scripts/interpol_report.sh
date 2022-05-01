@@ -21,10 +21,10 @@ function print_local {
     max_recv=$(get_max "MpiRecv" $1)
     max_barr=$(get_max "MpiBarrier" $1)
 
-    printf "\n\033[1mLocal communications to process \033[33m%d:\033[0m%13s\033[1;36m%9s\033[0m ± \033[1m%10s\033[0m %12b\033[0m … \033[91m%s\033[0m)\n" $1 " " "Time" "σ" "(\033[34mmin" "max"
-    printf "  Messages sent:                   \033[1;32m%9d\033[0m ─ \033[1;36m%9s\033[0m ± %10s %10b\033[0m … \033[91m%s\033[0m)\n" ${rank_send[$1]} $time_send $sigma_send "(\033[34m$min_send" $max_send
-    printf "  Messages received:               \033[1;32m%9d\033[0m ─ \033[1;36m%9s\033[0m ± %10s %10b\033[0m … \033[91m%s\033[0m)\n" ${rank_recv[$1]} $time_recv $sigma_recv "(\033[34m$min_recv" $max_recv
-    printf "  Barriers:                        \033[1;32m%9d\033[0m ─ \033[1;36m%9s\033[0m ± %9s %10b\033[0m … \033[91m%s\033[0m)\n" ${rank_barrier[$1]} $time_barr $sigma_barr "(\033[34m$min_barr" $max_barr
+    printf "\n\033[1mLocal communications to process \033[33m%d:\033[0m%13s\033[1;36m%9s\033[0m ± \033[1m%10s\033[0m %15b\033[0m … \033[91m%s\033[0m)\n" $1 " " "Time" "σ" "(\033[34mmin" "max"
+    printf "  Messages sent:                   \033[1;32m%9d\033[0m ─ \033[1;36m%9s\033[0m ± %11s  %10b\033[0m … \033[91m%s\033[0m)\n" ${rank_send[$1]} $time_send $sigma_send "(\033[34m$min_send" $max_send
+    printf "  Messages received:               \033[1;32m%9d\033[0m ─ \033[1;36m%9s\033[0m ± %11s  %10b\033[0m … \033[91m%s\033[0m)\n" ${rank_recv[$1]} $time_recv $sigma_recv "(\033[34m$min_recv" $max_recv
+    printf "  Barriers:                        \033[1;32m%9d\033[0m ─ \033[1;36m%10s\033[0m ± %10s %10b\033[0m … \033[91m%s\033[0m)\n" ${rank_barrier[$1]} $time_barr $sigma_barr "(\033[34m$min_barr" $max_barr
     printf "  Number of partner processes:     \033[1;32m%9d\033[0m (partner ranks ID:" ${nb_partners[$1]}
     printf " \033[1;33m%s\033[0m" ${partners[$@]}
     printf ")\n"
@@ -65,6 +65,11 @@ function get_time {
 }
 
 function get_sigma {
+    if [ $total_barriers -le 2 ] && [ $1 == "MpiBarrier" ]; then
+        echo "0s"
+        return 0
+    fi
+
     local file="tmp/${1}_${2}.tsc"
     if [ -f $file ]; then
         :

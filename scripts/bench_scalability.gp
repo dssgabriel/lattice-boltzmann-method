@@ -11,4 +11,5 @@ set key font "SF Pro Display,12"
 set key width -8
 set key off
 
-plot datafile u 2:xtic(1) with histogram title 'Latency by number of processes', '' u 0:2:2 with labels font "SF Pro Display,12" offset 0, char 0.5
+plot datafile u 2:xtic(1) with histogram title 'Latency by number of processes', \
+     '' u 0:2:2 with labels font "SF Pro Display,12" offset 0, char 0.5

@@ -37,56 +37,60 @@ function init_strong_bench {
 start=$(date +%s.%N)
 
 mkdir -p benchmarks/ plots/ tmp/
-mode=$1
-mpicmd=$2
-if [ "$mpicmd" = "mpiexec" ]; then
-    mpiflags="-n"
-elif [ "$mpicmd" = "mpirun" ]; then
-    mpiflags="--mca opal_warn_on_missing_libcuda 0 -n"
-elif [ "$mpicmd" = "mpcrun" ]; then
-    mpiflags="-n="
+bin=$1
+mode=$2
+mpicmd=$3
+flags="$(shift 3; echo "$*")"
+if [ "$mpicmd" = "mpiexec" ] || [ "$mpicmd" = "mpirun" ] || [ "$mpicmd" = "mpcrun" ]; then
+    :
 else
     printf "\033[1;31merror:\033[0m MPI command \`%s\` is unknown.\n" $mpicmd
     exit 1
 fi
-bin=$3
 
 nb_cores=$(lscpu | rg "Core\(s\) per socket:" | awk '{print $4}')
 nb_nodes=$(lscpu | rg "NUMA node\(s\):" | awk '{print $3}')
 pwd=$(pwd)
 
 bench=benchmarks/bench_$mode.dat
+plot=plots/results_$mode.png
 input="$pwd/$bench"
-output="$pwd/plots/results_bench_$mode.png"
+output="$pwd/$plot"
 rm -f $bench
 
 printf "\033[1;34m==>\033[0m Starting \033[1m%s scalability\033[0m benchmark on \033[35m%s\033[0m...\n" $mode $bin
 if [ "$mode" = "strong" ]; then
     create_config 800 160
-    procs=(1 2 4 8)
+    procs=(1 2 4)
     
     for (( i=0; i<${#procs[@]}; i++)); do
         proc=${procs[$i]}
-        printf "Running with \033[1;33m%d\033[0m processes... " $proc
         run=tmp/run_$proc.out
+        mpiflags="-n $proc"
+        if [ "$mpicmd" = "mpcrun" ]; then
+            mpiflags="-p=$proc -n=$proc"
+        fi
+        printf "Running with \033[1;33m%d\033[0m processes... " $proc
 
-        $mpicmd $mpiflags $proc $bin > $run
+        $mpicmd $mpiflags $flags $bin > $run
         latency=$(rg "Global simulation latency:" $run | awk '{print $4}' | sed -e "s/s//g")
 
         # Safe because bench output file changes at each iteration
         echo "$proc $latency" >> $bench
         printf "\033[1;32mdone\033[0m\n"
     done
-    gnuplot -e "datafile='${input}'; outputname='${output}'; xlab='Number of processes'; tit='Strong scalability of the LBM simulation'" ../scripts/bench_scalibility.gp
-elif [ "$mode" = "weak" ]; then
-    width=400
-    height=80
-    for (( i=0; i<4; i++ )); do
-        printf "Running with dimensions \033[1;33m%d\033[0mx\033[1;33m%d\033[0m... " $width $height
 
+    printf "\033[1;34m==>\033[0m Generating \033[1m%s scalability\033[0m histogram plot in \033[35m%s\033[0m...\n" $mode $plot
+    gnuplot -e "datafile='${input}'; outputname='${output}'; xlab='Number of processes'; tit='Strong scalability of the LBM simulation'" ../scripts/bench_scalability.gp
+elif [ "$mode" = "weak" ]; then
+    width=800
+    height=160
+    for (( i=0; i<4; i++ )); do
         create_config $width $height
         run=tmp/run_$i.out
-        $mpicmd $mpiflags 4 $bin > $run
+
+        printf "Running with dimensions \033[1;33m%d\033[0mx\033[1;33m%d\033[0m... " $width $height
+        $mpicmd $flags $bin > $run
 
         nb_cells=$(($width * $height))
         latency=$(rg "Global simulation latency:" $run | awk '{print $4}' | sed -e "s/s//g")
@@ -99,7 +103,9 @@ elif [ "$mode" = "weak" ]; then
         printf "\033[1;32mdone\033[0m\n"
         echo "$nb_cells $latency" >> $bench
     done
-    gnuplot -e "datafile='${input}'; outputname='${output}'; xlab='Number of pixels'; tit='Weak scalability of the LBM simulation'" ../scripts/bench_scalibility.gp
+
+    printf "\033[1;34m==>\033[0m Generating \033[1m%s scalability\033[0m histogram plot in \033[35m%s\033[0m...\n" $mode $plot
+    gnuplot -e "datafile='${input}'; outputname='${output}'; xlab='Number of cells'; tit='Weak scalability of the LBM simulation'" ../scripts/bench_scalability.gp
 else
     printf "\033[1;31merror:\033[0m mode \`%s\` is unknown. Available modes are: \`weak\`, \`strong\`.\n" $mode
     exit 1

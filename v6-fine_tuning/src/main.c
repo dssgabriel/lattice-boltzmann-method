@@ -183,15 +183,18 @@ int main(int argc, char* argv[argc + 1])
     for (ssize_t i = 1; i < ITERATIONS; i++) {
         clock_gettime(CLOCK_MONOTONIC_RAW, &loop_before);
 
-        // Compute special actions (border, obstacle...)
-        special_cells(&mesh, &mesh_type, &mesh_comm);
+        #pragma omp parallel 
+        {
+            // Compute special actions (border, obstacle...)
+            special_cells(&mesh, &mesh_type, &mesh_comm);
 
-        // Compute collision term
-        collision(&temp, &mesh);
+            // Compute collision term
+            collision(&temp, &mesh);
 
-        // Propagate values from node to neighboors
-        lbm_comm_ghost_exchange(&mesh_comm, &temp);
-        propagation(&mesh, &temp);
+            // Propagate values from node to neighboors
+            lbm_comm_ghost_exchange(&mesh_comm, &temp);
+            propagation(&mesh, &temp);
+        }
 
 #if defined(NO_DUMP)
         // Measure time

@@ -252,18 +252,31 @@ void lbm_comm_ghost_exchange(lbm_comm_t* mesh, Mesh* mesh_to_process)
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    // Left to right phase
-    lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_SEND, mesh->right_id,
-                                    mesh->width - 2);
-    lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_RECV, mesh->left_id,
-                                    0);
+    if (rank % 2) {
+        // Left to right phase
+        lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_SEND, mesh->right_id,
+                                        mesh->width - 2);
+        lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_RECV, mesh->left_id,
+                                        0);
 
-    // Right to left phase
-    lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_SEND, mesh->left_id,
-                                    1);
-    lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_RECV, mesh->right_id,
-                                    mesh->width - 1);
+        // Right to left phase
+        lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_SEND, mesh->left_id,
+                                        1);
+        lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_RECV, mesh->right_id,
+                                        mesh->width - 1);
+    } else {
+        // Left to right phase
+        lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_RECV, mesh->left_id,
+                                        0);
+        lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_SEND, mesh->right_id,
+                                        mesh->width - 2);
 
+        // Right to left phase
+        lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_RECV, mesh->right_id,
+                                        mesh->width - 1);
+        lbm_comm_sync_ghosts_horizontal(mesh_to_process, COMM_SEND, mesh->left_id,
+                                        1);
+    }
     // // Top to bottom phase
     // lbm_comm_sync_ghosts_vertical(mesh, mesh_to_process, COMM_SEND,
     //                               mesh->bottom_id, mesh->height - 2);

@@ -20,8 +20,8 @@ LBM_HEADERS := include/*.h
 LBM_OBJECTS := $(DEPS)/lbm_comm.o $(DEPS)/lbm_config.o $(DEPS)/lbm_init.o $(DEPS)/lbm_phys.o $(DEPS)/lbm_struct.o
 RAW := results.raw
 GIF := output.gif
-TRACE := interpol_traces.json
-TRACES := rank*_traces.json
+TRACE := interpol-tmp/interpol_traces.json
+TRACES := interpol-tmp/rank*_traces.json
 
 build: target/lbm target/display
 

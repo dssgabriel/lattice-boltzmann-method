@@ -9,7 +9,7 @@ maqao/
 
 # Files to ignore
 *.gif
-*.pdf
+project.pdf
 *.png
 *.raw
 *.json

@@ -1,6 +1,7 @@
+#include "lbm_phys.h"
+
 #include "lbm_comm.h"
 #include "lbm_config.h"
-#include "lbm_phys.h"
 #include "lbm_struct.h"
 
 #include <assert.h>
@@ -11,16 +12,10 @@
 #if DIRECTIONS == 9 && DIMENSIONS == 2
 /// Definition of the 9 base vectors used to discretize the directions on each
 /// mesh.
-static double const direction_a[DIRECTIONS] = {
-     0.0,  1.0,  0.0, 
-    -1.0,  0.0,  1.0,
-    -1.0, -1.0,  1.0
-};
-static double const direction_b[DIRECTIONS] = {
-    0.0,  0.0,  1.0, 
-    0.0, -1.0,  1.0,
-    1.0, -1.0, -1.0
-};
+static double const direction_a[DIRECTIONS] = { 0.0, 1.0,  0.0,  -1.0, 0.0,
+                                                1.0, -1.0, -1.0, 1.0 };
+static double const direction_b[DIRECTIONS] = { 0.0, 0.0, 1.0,  0.0, -1.0,
+                                                1.0, 1.0, -1.0, -1.0 };
 #else
     #error Need to defined adapted direction matrix.
 #endif
@@ -183,8 +178,8 @@ void compute_outflow_zou_he_const_density(lbm_mesh_cell_t cell)
 void special_cells(Mesh* mesh, lbm_mesh_type_t* mesh_type,
                    lbm_comm_t const* mesh_comm)
 {
-    // Loop on all inner cells
-    #pragma omp for schedule(static)
+// Loop on all inner cells
+#pragma omp for schedule(static)
     for (size_t i = 1; i < mesh->width - 1; i++) {
         for (size_t j = 1; j < mesh->height - 1; j++) {
             switch (*(lbm_cell_type_t_get_cell(mesh_type, i, j))) {
@@ -208,19 +203,20 @@ void special_cells(Mesh* mesh, lbm_mesh_type_t* mesh_type,
 
 void collision(Mesh* mesh_out, const Mesh* mesh_in)
 {
-    // Loop on all inner cells
-    #pragma omp for schedule(static)
+// Loop on all inner cells
+#pragma omp for schedule(static)
     for (size_t i = 1; i < mesh_in->width - 1; i++) {
         for (size_t j = 1; j < mesh_in->height - 1; j++) {
-            compute_cell_collision(Mesh_get_cell(mesh_out, i, j), Mesh_get_cell(mesh_in, i, j));
+            compute_cell_collision(Mesh_get_cell(mesh_out, i, j),
+                                   Mesh_get_cell(mesh_in, i, j));
         }
     }
 }
 
 void propagation(Mesh* mesh_out, Mesh const* mesh_in)
 {
-    // Loop on all cells
-    #pragma omp for schedule(static)
+// Loop on all cells
+#pragma omp for schedule(static)
     for (size_t i = 0; i < mesh_out->width; i++) {
         for (size_t k = 0; k < DIRECTIONS; k++) {
             double dir_a = direction_a[k];
@@ -230,8 +226,10 @@ void propagation(Mesh* mesh_out, Mesh const* mesh_in)
                 ssize_t ii = (i + dir_a);
                 ssize_t jj = (j + dir_b);
                 // Propagate to neighboor nodes
-                if ((ii >= 0 && ii < mesh_out->width) && (jj >= 0 && jj < mesh_out->height)) {
-                    Mesh_get_cell(mesh_out, ii, jj)[k] = Mesh_get_cell(mesh_in, i, j)[k];
+                if ((ii >= 0 && ii < mesh_out->width) &&
+                    (jj >= 0 && jj < mesh_out->height)) {
+                    Mesh_get_cell(mesh_out, ii, jj)[k] =
+                        Mesh_get_cell(mesh_in, i, j)[k];
                 }
             }
         }

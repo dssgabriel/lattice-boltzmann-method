@@ -1,6 +1,5 @@
 # Lattice Boltzmann method - Optimization techniques project
 
-## Introduction and description of the project
 The aim of this project is to optimize a numerical simulation of _Computational
 Fluid Dynamics_ (CFD) and to make it as scalable as possible. The base code is
 voluntarily "unoptomized" and contains errors that will need to be fixed through
@@ -25,7 +24,7 @@ Processing Units) and GPGPUs (General Purpose Graphical Processing Units).
 ## Installation
 ### Dependencies
 The following dependencies are needed to run the programs:
-- an MPI implementation and its patched C compiler (tested with OpenMPI v4.1.2, MPICH v4.0.2 and MPC v4.1.0);
+- an MPI implementation and its patched C compiler (tested with `OpenMPI` v4.1.2, `MPICH` v4.0.2 and `MPC` v4.1.0);
 - GNU Make
 
 ### Building
@@ -41,4 +40,4 @@ make build
 make run
 ```
 Other subcommands are available in the Makefiles, such as `make gif` which generates a GIF of the simulation.
-> Note: the `make trace` command requires you to have the [Interpol profiler][https://github.com/async-mpi-benchmarks/interpol] installed on your machine.
+> **Note:** the `make trace` command requires you to have the [Interpol profiler](https://github.com/async-mpi-benchmarks/interpol) installed on your machine.
